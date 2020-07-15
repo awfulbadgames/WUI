@@ -5,11 +5,10 @@
 ## Version: 1.0
 ## SavedVariables: WUIDB
 
-## X-Category: Miscellaneous
+## X-Category: Unit Frames, Miscellaneous
 ## X-License:
 ## X-Website:
-## X-Curse-Project-ID:
-## X-WoWI-ID:
+## X-Curse-Project-ID: 395894
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
