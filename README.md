@@ -3,7 +3,7 @@
 
 ## Overview
 
-WUI is a v
+WUI is a simple and lightweight addon that do some changes to the default Blizzard UI
 
 ### - Addon Installation
 
