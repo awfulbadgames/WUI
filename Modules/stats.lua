@@ -73,7 +73,7 @@ function Stats:StatsTooltip(frame)
 	local mem = collectgarbage("count")
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine("Total",  self:formatMem(totaladdon), 1, 1, 1, self:ColorGradient(totaladdon , 0,1,0, 1,1,0, 1,0,0))
-	GameTooltip:AddDoubleLine("Total incl. Blizzard", self:formatMem(mem), 1, 1, 1, self:ColorGradient(mem , 0,1,0, 1,1,0, 1,0,0))
+	GameTooltip:AddDoubleLine("Total + Blizzard", self:formatMem(mem), 1, 1, 1, self:ColorGradient(mem , 0,1,0, 1,1,0, 1,0,0))
 	GameTooltip:AddLine(" ")
 
 	local _, _, lh, lw = GetNetStats()
