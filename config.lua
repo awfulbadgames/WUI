@@ -27,6 +27,14 @@ config.defaults = {
         deBuffsStartPoint   = "TOPRIGHT",
         deBuffsRowMargin    = 20,
 
+        --Casting Bar
+        castingbarpoint            = select(1,CastingBarFrame:GetPoint()),
+        castingbarrelativeTo       = select(2,CastingBarFrame:GetPoint()),
+        castingbarrelativePoint    = select(3,CastingBarFrame:GetPoint()),
+        castingbarx     = 0,
+        castingbary     = 210,
+        castingbarscale = 1.3,
+
         --Minimap
         hidemapicon     = true,
         hidenorth       = true,
@@ -123,7 +131,7 @@ options = {
                         },
                     },
                 },
-                reloadmisc = {
+                reloadbuffs = {
                     order = 6, type = "group", inline = true,
                     name = "",
                     args = {
@@ -135,11 +143,62 @@ options = {
                 },
             },
         },
+        castingbar = {
+            name = "Casting Bar",
+            desc = "Changes to the casting bar",
+            type = 'group',
+            order = 2,
+            args = {
+                castingbartweaks = {
+                    order = 1, type = "group", inline = true,
+                    name = "Casting Bar Tweaks",
+                    args = {
+                        castingbarx = {
+                            order = 1, type = "range", min =  -(floor(tonumber(GetScreenWidth())) / 4) , max = floor(tonumber(GetScreenWidth())) / 4, step = 1, bigStep = 10,
+                            name = "Casting Bar X", desc = "Casting bar X position",
+                            get = function(info) return WUI.db.profile.castingbarx end,
+                            set = function(info,val)
+                                WUI.db.profile.castingbarx = val
+                                CastingBar:CastingBarUpdate()
+                            end,
+                        },
+                        castingbary = {
+                            order = 2, type = "range", min = 0, max = (floor(tonumber(GetScreenHeight())) /2), step = 1, bigStep = 10,
+                            name = "Casting Bar Y", desc = "Casting bar Y position",
+                            get = function(info) return WUI.db.profile.castingbary end,
+                            set = function(info,val)
+                                WUI.db.profile.castingbary = val
+                                CastingBar:CastingBarUpdate()
+                            end,
+                        },
+                        castingbarscale = {
+                            order = 3, type = "range", min = 0.1, max = 2.0,
+                            name = "Casting Bar Scale", desc = "Casting bar scale",
+                            get = function(info) return WUI.db.profile.castingbarscale end,
+                            set = function(info,val)
+                                WUI.db.profile.castingbarscale = val
+                                CastingBar:CastingBarUpdate()
+                            end,
+                        },
+                        reloadcastingbar = {
+                            order = 4, type = "group", inline = true,
+                            name = "",
+                            args = {
+                                reload = {
+                                    order = 1, type = "execute", func = function() ReloadUI() end, confirm = true,
+                                    name = "Reload UI", desc = format("%s", "\nTo these settings take effect, you need to reload user interface"),
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
         minimap = {
             name = "Minimap",
             desc = "Some changes to the Minimap",
             type = 'group',
-            order = 2,
+            order = 3,
             args = {
                 hidemapicon = {
                     order = 1, type = "toggle",
@@ -196,7 +255,7 @@ options = {
             name = "Miscellaneous",
             desc = "Some quality of life options",
             type = 'group',
-            order = 3,
+            order = 4,
             args = {
                 autoscreenshot = {
                     order = 1, type = "toggle",
@@ -247,7 +306,7 @@ options = {
             name = "UnitFrames",
             desc = "Some changes to the UnitFrames",
             type = 'group',
-            order = 4,
+            order = 5,
             args = {    
                 playerframeclasscolor = {
                     order = 1, type = "toggle",

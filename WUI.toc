@@ -25,6 +25,7 @@ config.lua
 
 Modules\autoscreenshot.lua
 Modules\buffs.lua
+Modules\castingbar.lua
 Modules\chat.lua
 Modules\easydelete.lua
 Modules\minimap.lua
