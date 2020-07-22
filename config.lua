@@ -28,12 +28,14 @@ config.defaults = {
         deBuffsRowMargin    = 20,
 
         --Casting Bar
-        castingbarpoint            = select(1,CastingBarFrame:GetPoint()),
-        castingbarrelativeTo       = select(2,CastingBarFrame:GetPoint()),
-        castingbarrelativePoint    = select(3,CastingBarFrame:GetPoint()),
-        castingbarx     = 0,
-        castingbary     = 210,
-        castingbarscale = 1.3,
+        castingbaricon          = true,
+        castingbariconposition  = 1,
+        castingbarpoint         = select(1,CastingBarFrame:GetPoint()),
+        castingbarrelativeTo    = select(2,CastingBarFrame:GetPoint()),
+        castingbarrelativePoint = select(3,CastingBarFrame:GetPoint()),
+        castingbarx             = 0,
+        castingbary             = 210,
+        castingbarscale         = 1.3,
 
         --Minimap
         hidemapicon     = true,
@@ -149,8 +151,30 @@ options = {
             type = 'group',
             order = 2,
             args = {
+                castingbaricon = {
+                    order = 1, type = "toggle",
+                    name = "Casting Bar Icon", desc = "Show the casting bar icon",
+                    get = function(info) return WUI.db.profile.castingbaricon end,
+                    set = function(info,val) WUI.db.profile.castingbaricon = val end,
+                },
+                castingbariconposition = {
+                    order = 2, type = "select",
+                    name = "Casting Bar Icon Position",
+                    desc = "Position of the icon relative to the casting bar",
+                    get = function ()
+                        return WUI.db.profile.castingbariconposition
+                    end,
+                    set = function (info, newValue)
+                        WUI.db.profile.castingbariconposition = newValue; 
+                    end,
+                    style = "dropdown",
+                    values = {"Left", "Inside", "Right"},
+                    disabled = function () 
+                        return WUI.db.profile.castingbaricon == false;
+                    end,
+                },
                 castingbartweaks = {
-                    order = 1, type = "group", inline = true,
+                    order = 3, type = "group", inline = true,
                     name = "Casting Bar Tweaks",
                     args = {
                         castingbarx = {
