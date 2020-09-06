@@ -308,12 +308,12 @@ options = {
                         Stats:UpdateStats()
                     end,
                 },
---[[                 talkinghead = {
+                talkinghead = {
                     order = 5, type = "toggle",
                     name = "Talking Head", desc = "Hides the talking head frame",
                     get = function(info) return WUI.db.profile.talkinghead end,
                     set = function(info,val) WUI.db.profile.talkinghead = val end,
-                }, ]]
+                },
                 reloadmisc = {
                     order = 6, type = "group", inline = true,
                     name = "",

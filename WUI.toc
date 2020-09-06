@@ -30,5 +30,5 @@ Modules\chat.lua
 Modules\easydelete.lua
 Modules\minimap.lua
 Modules\stats.lua
-##Modules\talkinghead.lua
+Modules\talkinghead.lua
 Modules\unitframes.lua
