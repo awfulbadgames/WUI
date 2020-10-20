@@ -91,6 +91,7 @@ function Chat:OnEnable()
         --skin chat
         for i = 1, NUM_CHAT_WINDOWS do
             local chatframe = _G["ChatFrame"..i]
+            chatframe:SetClampRectInsets(0, 0, 0, 0)
             self:SkinChat(chatframe)
             --adjust channel display
             if (i ~= 2) then
@@ -112,11 +113,16 @@ function Chat:SkinChat(self)
     local name = self:GetName()
     --chat frame resizing
     self:SetClampRectInsets(0, 0, 0, 0)
-    self:SetMaxResize(UIParent:GetWidth()/2, UIParent:GetHeight()/2)
+    --self:SetMaxResize(UIParent:GetWidth()/2, UIParent:GetHeight()/2)  --original
+    self:SetMaxResize(floor(tonumber(GetScreenWidth()))/2, floor(tonumber(GetScreenHeight()))/2)
     self:SetMinResize(100, 50)
-    self:SetPoint("BOTTOMLEFT", UIParent, 5, 9)
-    self:SetWidth(440)
-    self:SetHeight(190)
+
+    if name ~= "ChatFrame2" then
+        self:ClearAllPoints()
+        self:SetPoint("BOTTOMLEFT", UIParent, 5, 9)
+        self:SetWidth(440)
+        self:SetHeight(190)
+    end
 
     --chat fading
     self:SetFading(true)
