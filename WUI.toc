@@ -29,6 +29,7 @@ Modules\castingbar.lua
 Modules\chat.lua
 Modules\easydelete.lua
 Modules\minimap.lua
+Modules\movetooltip.lua
 Modules\stats.lua
 Modules\talkinghead.lua
 Modules\unitframes.lua

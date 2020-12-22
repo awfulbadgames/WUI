@@ -71,6 +71,10 @@ config.defaults = {
         targetframescale            = 1.3, --TargetFrame:GetScale(),
     
         raidframescale = 1,
+
+        mttx = 0,
+        mtty = 0,
+
     },
 }
 
@@ -326,11 +330,35 @@ options = {
                 },
             },
         },
+
+        tooltip = {
+            name = "ToolTip",
+            desc = "Change the anchor of the tooltip",
+            type = 'group',
+            order = 5,
+            args = {
+                mtt = {
+                    order = 6, type = "group", inline = true,
+                    name = "",
+                    args = {
+                        show_mtt = {
+                            order = 1, type = "execute", func = function() MTTDragFrame1:Show() end,
+                            name = "Show Anchor", desc = format("%s", "\nShow a moveble box where tooltip can be anchored"),
+                        },
+                        hide_mtt = {
+                            order = 2, type = "execute", func = function() MTTDragFrame1:Hide() end,
+                            name = "Hide Anchor", desc = format("%s", "\nHide a moveble box where tooltip can be anchored"),
+                        },
+                    },
+                },
+            },
+        },
+
         unitframes = {
             name = "UnitFrames",
             desc = "Some changes to the UnitFrames",
             type = 'group',
-            order = 5,
+            order = 6,
             args = {    
                 playerframeclasscolor = {
                     order = 1, type = "toggle",
