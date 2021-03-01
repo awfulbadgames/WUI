@@ -1,5 +1,8 @@
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=NW2RZCWTRC2ZE&currency_code=BRL)
+
 # WUI
- Simple and lightweight addon that do some changes to the default Blizzard UI
+
+Simple and lightweight addon that do some changes to the default Blizzard UI
 
 ## Overview
 
@@ -61,3 +64,7 @@ http://www.arenajunkies.com/topic/222642-default-ui-scripts/
 - Libraries from Ace3:
 
 https://www.curseforge.com/wow/addons/ace3
+
+## Donation
+
+[![paypal](https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)](https://www.paypal.com/donate?business=NW2RZCWTRC2ZE&currency_code=BRL)
