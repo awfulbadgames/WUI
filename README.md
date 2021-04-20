@@ -22,6 +22,7 @@ Changes to the Buffs Frame
 Changes to the Minimap Frame
 Changes to the Chat Frame
 Changes to the Unit Frames
+Changes to the Tooltip Frame
 Some quality of life options
 
 ### - ToDo
@@ -29,7 +30,6 @@ Some quality of life options
 ItemLevel
 Localization
 Profiles
-Tootltips
 
 ### - Recommended Addons
 
@@ -37,8 +37,6 @@ List of some addons that works great with WUI
 
 BlizzMove - https://www.curseforge.com/wow/addons/blizzmove
 Dominos - https://www.curseforge.com/wow/addons/dominos
-TipTac - https://www.curseforge.com/wow/addons/tip-tac
-
 
 ### Based on and used code from some addons ###
 

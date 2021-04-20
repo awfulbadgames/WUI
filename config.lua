@@ -75,6 +75,22 @@ config.defaults = {
         mttx = 0,
         mtty = 0,
 
+        --Tooltips
+		TipColor = true,
+		TipClassColor = true,
+		HideCombat = false,
+
+		UnitTitle = true,
+		UnitGender = false,
+		UnitStatus = true,
+		UnitRealm = true,
+		RealmLabel = false,
+		GuildRank = false,
+
+		TargetOfTarget = true,
+		TradeGoods = true,
+		FactionIcon = false,
+		--LinkIcon = true,
     },
 }
 
@@ -341,13 +357,98 @@ options = {
                     order = 6, type = "group", inline = true,
                     name = "",
                     args = {
-                        show_mtt = {
-                            order = 1, type = "execute", func = function() MTTDragFrame1:Show() end,
-                            name = "Show Anchor", desc = format("%s", "\nShow a moveble box where tooltip can be anchored"),
+                        TipColor = {
+                            order = 1, type = "toggle",
+                            name = "Tooltip Border Class Color", desc = "Change tooltip border to class color",
+                            get = function(info) return WUI.db.profile.TipColor end,
+                            set = function(info,val) WUI.db.profile.TipColor = val end,
                         },
-                        hide_mtt = {
-                            order = 2, type = "execute", func = function() MTTDragFrame1:Hide() end,
-                            name = "Hide Anchor", desc = format("%s", "\nHide a moveble box where tooltip can be anchored"),
+                        TipClassColor = {
+                            order = 2, type = "toggle",
+                            name = "Tooltip Name Class Color", desc = "Change tooltip name to class color",
+                            get = function(info) return WUI.db.profile.TipClassColor end,
+                            set = function(info,val) WUI.db.profile.TipClassColor = val end,
+                        },
+                        HideCombat  = {
+                            order = 3, type = "toggle",
+                            name = "Hide Tooltip in Combat", desc = "Hide tooltip when in combat",
+                            get = function(info) return WUI.db.profile.HideCombat end,
+                            set = function(info,val) WUI.db.profile.HideCombat = val end,
+                        },
+                        UnitTitle = {
+                            order = 4, type = "toggle",
+                            name = "Unit Title", desc = "Show/Hide unit title",
+                            get = function(info) return WUI.db.profile.UnitTitle end,
+                            set = function(info,val) WUI.db.profile.UnitTitle = val end,
+                        },
+                        UnitGender = {
+                            order = 5, type = "toggle",
+                            name = "Unit Gender", desc = "Show/Hide unit gender",
+                            get = function(info) return WUI.db.profile.UnitGender end,
+                            set = function(info,val) WUI.db.profile.UnitGender = val end,
+                        },
+                        UnitStatus = {
+                            order = 6, type = "toggle",
+                            name = "Unit Status", desc = "Show/Hide unit status",
+                            get = function(info) return WUI.db.profile.UnitStatus end,
+                            set = function(info,val) WUI.db.profile.UnitStatus = val end,
+                        },
+                        UnitRealm = {
+                            order = 7, type = "toggle",
+                            name = "Unit Realm", desc = "Show/Hide unit realm",
+                            get = function(info) return WUI.db.profile.UnitRealm end,
+                            set = function(info,val) WUI.db.profile.UnitRealm = val end,
+                        },
+                        RealmLabel = {
+                            order = 8, type = "toggle",
+                            name = "Unit Realm Label", desc = "Show/Hide unit realm label",
+                            get = function(info) return WUI.db.profile.RealmLabel end,
+                            set = function(info,val) WUI.db.profile.RealmLabel = val end,
+                        },
+                        GuildRank = {
+                            order = 9, type = "toggle",
+                            name = "Unit Guild Rank", desc = "Show/Hide unit guild rank",
+                            get = function(info) return WUI.db.profile.GuildRank end,
+                            set = function(info,val) WUI.db.profile.GuildRank = val end,
+                        },
+                        TargetOfTarget = {
+                            order = 9, type = "toggle",
+                            name = "Target of Target", desc = "Show/Hide target of target",
+                            get = function(info) return WUI.db.profile.TargetOfTarget end,
+                            set = function(info,val) WUI.db.profile.TargetOfTarget = val end,
+                        },
+                        TradeGoods = {
+                            order = 9, type = "toggle",
+                            name = "Trade Goods", desc = "Show/Hide trade goods type",
+                            get = function(info) return WUI.db.profile.TradeGoods end,
+                            set = function(info,val) WUI.db.profile.TradeGoods = val end,
+                        },
+                        FactionIcon = {
+                            order = 9, type = "toggle",
+                            name = "Faction Icon", desc = "Show/Hide faction icon",
+                            get = function(info) return WUI.db.profile.FactionIcon end,
+                            set = function(info,val) WUI.db.profile.FactionIcon = val end,
+                        },
+                        --LinkIcon = {
+                        --    order = 9, type = "toggle",
+                        --    name = "Link Icon", desc = "Show/Hide icon from linked icons",
+                        --    get = function(info) return WUI.db.profile.LinkIcon end,
+                        --    set = function(info,val) WUI.db.profile.LinkIcon = val end,
+                        --},
+
+                        tooltipanchor = {
+                            order = 10, type = "group", inline = true,
+                            name = "",
+                            args = {
+                                show_mtt = {
+                                    order = 16, type = "execute", func = function() MTTDragFrame1:Show() end,
+                                    name = "Show Anchor", desc = format("%s", "\nShow a moveble box where tooltip can be anchored"),
+                                },
+                                hide_mtt = {
+                                    order = 17, type = "execute", func = function() MTTDragFrame1:Hide() end,
+                                    name = "Hide Anchor", desc = format("%s", "\nHide a moveble box where tooltip can be anchored"),
+                                },
+                            },
                         },
                     },
                 },

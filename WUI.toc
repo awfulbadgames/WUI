@@ -32,4 +32,5 @@ Modules\minimap.lua
 Modules\movetooltip.lua
 Modules\stats.lua
 Modules\talkinghead.lua
+Modules\tooltip.lua
 Modules\unitframes.lua
