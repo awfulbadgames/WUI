@@ -6,7 +6,7 @@ https://www.curseforge.com/wow/addons/cloudy-tooltip-mod
 
 ]]--
 
-TooltipFR = WUI:NewModule("TooltipFR", "AceEvent-3.0", "AceHook-3.0")
+TooltipFR = WUI:NewModule("TooltipFR", "AceHook-3.0")
 
 function TooltipFR:OnInitialize()
 end
