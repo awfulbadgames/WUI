@@ -1,6 +1,6 @@
 --[[
 
-Code from Xorag
+Code in parts or totally from Xorag
 
 https://github.com/Xorag/BeQuiet
 

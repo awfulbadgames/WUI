@@ -1,6 +1,6 @@
 --[[
 
-Code from zorker
+Code in parts or totally from zorker
 
 https://github.com/zorker/rothui
 https://github.com/zorker/rothui/tree/master/wow8.0/rChat

@@ -23,6 +23,7 @@ Changes to the Minimap Frame
 Changes to the Chat Frame
 Changes to the Unit Frames
 Changes to the Tooltip Frame
+Keybind integrated
 Some quality of life options
 
 ### - ToDo
@@ -38,7 +39,7 @@ List of some addons that works great with WUI
 BlizzMove - https://www.curseforge.com/wow/addons/blizzmove
 Dominos - https://www.curseforge.com/wow/addons/dominos
 
-### Based on and used code from some addons ###
+### Based on and used code in parts or totally from some addons ###
 
 - Code from zorker:
 
@@ -48,7 +49,7 @@ https://github.com/zorker/rothui/tree/master/wow8.0/rChat
 
 (MIT license)
 
-- Code from lithammer
+- Code from lithammer:
 
 https://github.com/lithammer/NeavUI
 https://github.com/lithammer/NeavUI/tree/master/Interface/AddOns/nBuff
@@ -58,6 +59,34 @@ https://github.com/lithammer/NeavUI/tree/master/Interface/AddOns/nBuff
 - Code from Arena Junkies:
 
 http://www.arenajunkies.com/topic/222642-default-ui-scripts/
+
+- Code from Lohkin:
+
+https://www.curseforge.com/wow/addons/ealign-updated
+
+(Public Domain)
+
+- Code from _ForgeUser329408:
+
+https://www.curseforge.com/wow/addons/keybound
+
+(MIT License)
+
+- Code from Xorag:
+
+https://github.com/Xorag/BeQuiet
+
+(MIT License)
+
+- Code from WowWiki:
+
+https://wowwiki-archive.fandom.com/wiki/Making_Draggable_Frames
+
+- Code from blizzsorc:
+
+https://www.curseforge.com/wow/addons/tooltip-enhanced
+
+MIT license
 
 - Libraries from Ace3:
 

@@ -72,25 +72,57 @@ config.defaults = {
     
         raidframescale = 1,
 
-        mttx = 0,
-        mtty = 0,
+        --Tooltip
+        UnitTitle           = true,
+		UnitGender          = false,
+		UnitStatus          = true,
+		UnitRealm           = true,
+		RealmLabel          = false,
+		GuildRank           = false,
+        TargetOfTarget      = true,
+        insideBar           = true,
 
-        --Tooltips
-		TipColor = true,
-		TipClassColor = true,
-		HideCombat = false,
-
-		UnitTitle = true,
-		UnitGender = false,
-		UnitStatus = true,
-		UnitRealm = true,
-		RealmLabel = false,
-		GuildRank = false,
-
-		TargetOfTarget = true,
-		TradeGoods = true,
-		FactionIcon = false,
-		--LinkIcon = true,
+        scaleFactor         = 1.0,
+        showServerName      = true,
+        enableClassColor    = true,
+        --enableGuildColor    = true,
+        enableFactionColor  = true, -- opposite faction
+        showUnitHealth      = true,
+        healthFont          = STANDARD_TEXT_FONT,
+        healthFontSize      = 13, -- 12 and 14 (default)
+        healthFontFlags     = 'OUTLINE',
+        healthOffsetY       = 0,
+    
+        anchorToCursor      = false,
+        anchorToCursorAlt   = false, -- WorldFrame only
+        cursorAnchorPoint   = 'ANCHOR_CURSOR_LEFT', -- '_CURSOR_LEFT', '_CURSOR', '_CURSOR_RIGHT'
+        cursorOffsetX       = 0,
+        cursorOffsetY       = 0,
+        useCustomPosition   = false,
+        point               = 'CENTER',
+        relativeFrame       = UIParent,
+        relativePoint       = 'CENTER',
+        offsetX             = 0,
+        offsetY             = 0,
+    
+        hideInCombat        = false, -- for buffs, spells, items, etc. the tooltip remains visible
+        showSpellID         = false,
+        spellIDText         = GetLocale() == 'ruRU' and 'ID заклинания:' or 'Spell ID:',
+        spellIDTextColor    = CreateColor(1, 0.50196, 0), -- LEGENDARY_ORANGE_COLOR, HEIRLOOM_BLUE_COLOR
+        
+        colorGuildByReaction = true,
+        colGuild = "|cff0080cc",
+        colSameGuild = "|cffff32ff",
+        colRace = "|cffffffff",
+        colLevel = "|cffc0c0c0",
+    
+        colReactText1 = "|cffc0c0c0",
+        colReactText2 = "|cffff0000",
+        colReactText3 = "|cffff7f00",
+        colReactText4 = "|cffffff00",
+        colReactText5 = "|cff00ff00",
+        colReactText6 = "|cff25c1eb",
+        colReactText7 = "|cff808080",
     },
 }
 
@@ -99,11 +131,35 @@ options = {
     name = format("WUI - v%.2f", GetAddOnMetadata("WUI", "Version")),
     handler = WUI,
     args = {
+
+        align = {
+            name = "Align",
+            desc = "Turn on/off a grid pattern in the UI",
+            type = 'group',
+            order = 1,
+            args = {
+                aligntext = {
+                    order = 1, type = "description",
+                    name = "You also can type /align to turn on/off the grid",
+                },
+                aligngrid = {
+                    order = 2, type = "group", inline = true,
+                    name = "",
+                    args = {
+                        bind = {
+                            order = 1, type = "execute", func = function() SlashCmdList["EA"]("align"); InterfaceOptionsFrame_Show(false) end,
+                            name = "Align...", desc = format("%s", "\nTurn on/off the grid"),
+                        },
+                    },
+                },
+            },
+        },
+
         buffsframe = {
             name = "Buffs",
             desc = "Some changes to the BuffFrame",
             type = 'group',
-            order = 1,
+            order = 1.1,
             args = {
                 buffs = {
                     order = 1, type = "group", inline = true,
@@ -165,6 +221,7 @@ options = {
                 },
             },
         },
+        
         castingbar = {
             name = "Casting Bar",
             desc = "Changes to the casting bar",
@@ -238,11 +295,37 @@ options = {
                 },
             },
         },
+
+        --local LibKeyBound = LibStub('LibKeyBound-1.0')
+        --LibKeyBound:Toggle()
+        keybind = {
+            name = "Keybind",
+            desc = "Change Actionbars Keybinds",
+            type = 'group',
+            order = 3,
+            args = {
+                bindtext = {
+                    order = 1, type = "description",
+                    name = "You also can type /kb to bind keys",
+                },
+                bindmode = {
+                    order = 2, type = "group", inline = true,
+                    name = "",
+                    args = {
+                        bind = {
+                            order = 1, type = "execute", func = function() local LibKeyBound = LibStub('LibKeyBound-1.0'); LibKeyBound:Toggle(); InterfaceOptionsFrame_Show(false) end,
+                            name = "Bind keys...", desc = format("%s", "\nEnter binding key mode"),
+                        },
+                    },
+                },
+            },
+        },
+
         minimap = {
             name = "Minimap",
             desc = "Some changes to the Minimap",
             type = 'group',
-            order = 3,
+            order = 4,
             args = {
                 hidemapicon = {
                     order = 1, type = "toggle",
@@ -295,11 +378,12 @@ options = {
                 },
             },
         },
+
         misc = {
             name = "Miscellaneous",
             desc = "Some quality of life options",
             type = 'group',
-            order = 4,
+            order = 5,
             args = {
                 autoscreenshot = {
                     order = 1, type = "toggle",
@@ -351,104 +435,117 @@ options = {
             name = "ToolTip",
             desc = "Change the anchor of the tooltip",
             type = 'group',
-            order = 5,
+            order = 6,
             args = {
-                mtt = {
-                    order = 6, type = "group", inline = true,
+                enableClassColor = {
+                    order = 1, type = "toggle",
+                    name = "Class Color", desc = "Change tooltip border, name and health bar to class color",
+                    get = function(info) return WUI.db.profile.enableClassColor end,
+                    set = function(info,val) WUI.db.profile.enableClassColor = val end,
+                },
+                UnitTitle = {
+                    order = 2, type = "toggle",
+                    name = "Title", desc = "Show/Hide title",
+                    get = function(info) return WUI.db.profile.UnitTitle end,
+                    set = function(info,val) WUI.db.profile.UnitTitle = val end,
+                },
+                UnitGender = {
+                    order = 3, type = "toggle",
+                    name = "Gender", desc = "Show/Hide gender",
+                    get = function(info) return WUI.db.profile.UnitGender end,
+                    set = function(info,val) WUI.db.profile.UnitGender = val end,
+                },
+                UnitStatus = {
+                    order = 4, type = "toggle",
+                    name = "Status", desc = "Show/Hide status <AFK> <DND>",
+                    get = function(info) return WUI.db.profile.UnitStatus end,
+                    set = function(info,val) WUI.db.profile.UnitStatus = val end,
+                },
+                UnitRealm = {
+                    order = 5, type = "toggle",
+                    name = "Realm", desc = "Show/Hide realm",
+                    get = function(info) return WUI.db.profile.UnitRealm end,
+                    set = function(info,val) WUI.db.profile.UnitRealm = val end,
+                },
+                RealmLabel = {
+                    order = 6, type = "toggle",
+                    name = "Realm Label", desc = "Show/Hide realm label",
+                    get = function(info) return WUI.db.profile.RealmLabel end,
+                    set = function(info,val) WUI.db.profile.RealmLabel = val end,
+                },
+                GuildRank = {
+                    order = 7, type = "toggle",
+                    name = "Guild Rank", desc = "Show/Hide guild rank",
+                    get = function(info) return WUI.db.profile.GuildRank end,
+                    set = function(info,val) WUI.db.profile.GuildRank = val end,
+                },
+                colorGuildByReaction = {
+                    order = 8, type = "toggle",
+                    name = "Guild Color by Reaction", desc = "Color guild name by reaction",
+                    get = function(info) return WUI.db.profile.colorGuildByReaction end,
+                    set = function(info,val) WUI.db.profile.colorGuildByReaction = val end,
+                },
+                TargetOfTarget = {
+                    order = 9, type = "toggle",
+                    name = "Target of Target", desc = "Show/Hide target of target",
+                    get = function(info) return WUI.db.profile.TargetOfTarget end,
+                    set = function(info,val) WUI.db.profile.TargetOfTarget = val end,
+                },
+                showUnitHealth = {
+                    order = 10, type = "toggle",
+                    name = "Show Health Text", desc = "Show/Hide tooltip health text",
+                    get = function(info) return WUI.db.profile.showUnitHealth end,
+                    set = function(info,val) WUI.db.profile.showUnitHealth = val end,
+                },
+                insideBar = {
+                    order = 11, type = "toggle",
+                    name = "Health Bar Inside", desc = "Place tooltip health bar inside tooltip (will reload ui)",
+                    get = function(info) return WUI.db.profile.insideBar end,
+                    set = function(info,val) WUI.db.profile.insideBar = val, ReloadUI() end,
+                },
+                tooltipHeader2 = {
+                    order = 12, type = "header",
+                    name = "", desc = "",
+                    get = function(info) return WUI.db.profile.HideCombat end,
+                    set = function(info,val) WUI.db.profile.HideCombat = val end,
+                },
+                hideInCombat = {
+                    order = 13, type = "toggle",
+                    name = "Hide in Combat", desc = "Hide tooltip when in combat",
+                    get = function(info) return WUI.db.profile.hideInCombat end,
+                    set = function(info,val) WUI.db.profile.hideInCombat = val end,
+                },
+                showSpellID = {
+                    order = 14, type = "toggle",
+                    name = "Show Spell Id", desc = "Show spell id in tooltip",
+                    get = function(info) return WUI.db.profile.showSpellID end,
+                    set = function(info,val) WUI.db.profile.showSpellID = val end,
+                },
+                tooltipHeader3 = {
+                    order = 15, type = "header",
+                    name = "Tooltip Anchor", desc = "",
+                    get = function(info) return WUI.db.profile.HideCombat end,
+                    set = function(info,val) WUI.db.profile.HideCombat = val end,
+                },
+                useCustomPosition = {
+                    order = 16, type = "toggle",
+                    name = "Anchor to Custom Position", desc = "Anchor tooltip to a custom position",
+                    get = function(info) return WUI.db.profile.useCustomPosition end,
+                    set = function(info,val) WUI.db.profile.useCustomPosition = val end,
+                },
+                anchorToCursor = {
+                    order = 17, type = "toggle",
+                    name = "Anchor to Cursor", desc = "Anchor tooltip to cursor",
+                    get = function(info) return WUI.db.profile.anchorToCursor end,
+                    set = function(info,val) WUI.db.profile.anchorToCursor = val end,
+                },
+                tooltipanchor = {
+                    order = 18, type = "group", inline = true,
                     name = "",
                     args = {
-                        TipColor = {
-                            order = 1, type = "toggle",
-                            name = "Tooltip Border Class Color", desc = "Change tooltip border to class color",
-                            get = function(info) return WUI.db.profile.TipColor end,
-                            set = function(info,val) WUI.db.profile.TipColor = val end,
-                        },
-                        TipClassColor = {
-                            order = 2, type = "toggle",
-                            name = "Tooltip Name Class Color", desc = "Change tooltip name to class color",
-                            get = function(info) return WUI.db.profile.TipClassColor end,
-                            set = function(info,val) WUI.db.profile.TipClassColor = val end,
-                        },
-                        HideCombat  = {
-                            order = 3, type = "toggle",
-                            name = "Hide Tooltip in Combat", desc = "Hide tooltip when in combat",
-                            get = function(info) return WUI.db.profile.HideCombat end,
-                            set = function(info,val) WUI.db.profile.HideCombat = val end,
-                        },
-                        UnitTitle = {
-                            order = 4, type = "toggle",
-                            name = "Unit Title", desc = "Show/Hide unit title",
-                            get = function(info) return WUI.db.profile.UnitTitle end,
-                            set = function(info,val) WUI.db.profile.UnitTitle = val end,
-                        },
-                        UnitGender = {
-                            order = 5, type = "toggle",
-                            name = "Unit Gender", desc = "Show/Hide unit gender",
-                            get = function(info) return WUI.db.profile.UnitGender end,
-                            set = function(info,val) WUI.db.profile.UnitGender = val end,
-                        },
-                        UnitStatus = {
-                            order = 6, type = "toggle",
-                            name = "Unit Status", desc = "Show/Hide unit status",
-                            get = function(info) return WUI.db.profile.UnitStatus end,
-                            set = function(info,val) WUI.db.profile.UnitStatus = val end,
-                        },
-                        UnitRealm = {
-                            order = 7, type = "toggle",
-                            name = "Unit Realm", desc = "Show/Hide unit realm",
-                            get = function(info) return WUI.db.profile.UnitRealm end,
-                            set = function(info,val) WUI.db.profile.UnitRealm = val end,
-                        },
-                        RealmLabel = {
-                            order = 8, type = "toggle",
-                            name = "Unit Realm Label", desc = "Show/Hide unit realm label",
-                            get = function(info) return WUI.db.profile.RealmLabel end,
-                            set = function(info,val) WUI.db.profile.RealmLabel = val end,
-                        },
-                        GuildRank = {
-                            order = 9, type = "toggle",
-                            name = "Unit Guild Rank", desc = "Show/Hide unit guild rank",
-                            get = function(info) return WUI.db.profile.GuildRank end,
-                            set = function(info,val) WUI.db.profile.GuildRank = val end,
-                        },
-                        TargetOfTarget = {
-                            order = 9, type = "toggle",
-                            name = "Target of Target", desc = "Show/Hide target of target",
-                            get = function(info) return WUI.db.profile.TargetOfTarget end,
-                            set = function(info,val) WUI.db.profile.TargetOfTarget = val end,
-                        },
-                        TradeGoods = {
-                            order = 9, type = "toggle",
-                            name = "Trade Goods", desc = "Show/Hide trade goods type",
-                            get = function(info) return WUI.db.profile.TradeGoods end,
-                            set = function(info,val) WUI.db.profile.TradeGoods = val end,
-                        },
-                        FactionIcon = {
-                            order = 9, type = "toggle",
-                            name = "Faction Icon", desc = "Show/Hide faction icon",
-                            get = function(info) return WUI.db.profile.FactionIcon end,
-                            set = function(info,val) WUI.db.profile.FactionIcon = val end,
-                        },
-                        --LinkIcon = {
-                        --    order = 9, type = "toggle",
-                        --    name = "Link Icon", desc = "Show/Hide icon from linked icons",
-                        --    get = function(info) return WUI.db.profile.LinkIcon end,
-                        --    set = function(info,val) WUI.db.profile.LinkIcon = val end,
-                        --},
-
-                        tooltipanchor = {
-                            order = 10, type = "group", inline = true,
-                            name = "",
-                            args = {
-                                show_mtt = {
-                                    order = 16, type = "execute", func = function() MTTDragFrame1:Show() end,
-                                    name = "Show Anchor", desc = format("%s", "\nShow a moveble box where tooltip can be anchored"),
-                                },
-                                hide_mtt = {
-                                    order = 17, type = "execute", func = function() MTTDragFrame1:Hide() end,
-                                    name = "Hide Anchor", desc = format("%s", "\nHide a moveble box where tooltip can be anchored"),
-                                },
-                            },
+                        show_anchor = {
+                            order = 1, type = "execute", func = function() DragFrame2:Show(); InterfaceOptionsFrame_Show(false) end,
+                            name = "Show Anchor", desc = format("%s", "\nShow a moveble box where tooltip can be anchored"),
                         },
                     },
                 },
@@ -459,7 +556,7 @@ options = {
             name = "UnitFrames",
             desc = "Some changes to the UnitFrames",
             type = 'group',
-            order = 6,
+            order = 7,
             args = {    
                 playerframeclasscolor = {
                     order = 1, type = "toggle",

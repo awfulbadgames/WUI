@@ -1,16 +1,18 @@
 --[[
 
-Code from zorker
+Code in parts or totally from zorker
 
 https://github.com/zorker/rothui
 https://github.com/zorker/rothui/tree/master/wow8.0/rBuffFrame
 
 MIT license
 
-Code from lithammer
+Code in parts or totally from lithammer
 
 https://github.com/lithammer/NeavUI
 https://github.com/lithammer/NeavUI/tree/master/Interface/AddOns/nBuff
+
+MIT license
 
 ]]--
 

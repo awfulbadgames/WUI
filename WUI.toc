@@ -2,7 +2,7 @@
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
-## Version: 1.7
+## Version: 1.8
 ## SavedVariables: WUIDB
 
 ## X-Category: Unit Frames, Miscellaneous
@@ -19,17 +19,20 @@ Libs\AceHook-3.0\AceHook-3.0.xml
 Libs\AceDB-3.0\AceDB-3.0.xml
 Libs\AceGUI-3.0\AceGUI-3.0.xml
 Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\LibKeyBound-1.0\lib.xml
 
 core.lua
 config.lua
 
+Modules\align.lua
 Modules\autoscreenshot.lua
 Modules\buffs.lua
 Modules\castingbar.lua
 Modules\chat.lua
 Modules\easydelete.lua
-Modules\minimap.lua
+Modules\keybind.lua
 Modules\movetooltip.lua
+Modules\minimap.lua
 Modules\stats.lua
 Modules\talkinghead.lua
 Modules\tooltip.lua

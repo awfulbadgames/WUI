@@ -1,6 +1,6 @@
 --[[
 
-Code from Arena Junkies
+Code in parts or totally from Arena Junkies
 
 http://www.arenajunkies.com/topic/222642-default-ui-scripts/
 

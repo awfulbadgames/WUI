@@ -1,111 +1,62 @@
-﻿--[[
+--[[
 
-Code from TheWebDeveloper
+Code in parts or totally from WowWiki
 
-https://www.curseforge.com/wow/addons/movetooltip-dtip
+https://wowwiki-archive.fandom.com/wiki/Making_Draggable_Frames
 
 ]]--
 
-MoveToolTip = WUI:NewModule("MoveToolTip")
+local MoveTooltip = WUI:NewModule("MoveTooltip")
 
-local MTTInCombat = false
-local MTTEventFrame
-local MTTDragFrame1
-local MTTW = 20
-local MTTH = 20
+function MoveTooltip:OnInitialize()
+    frame = CreateFrame("Frame", "DragFrame2", UIParent)
+    frame:SetMovable(true)
+    frame:SetPoint(WUI.db.profile.point, WUI.db.profile.offsetX, WUI.db.profile.offsetY)
+    frame:EnableMouse(true)
+    frame:SetClampedToScreen(true)
+    frame:SetSize(150,24);
 
+    local tex = frame:CreateTexture("ARTWORK")
+    tex:SetAllPoints()
+    tex:SetTexture(1.0, 0.5, 0); tex:SetAlpha(0.5)
 
-function MoveToolTip:OnInitialize()
-    -- MTT Drag frame setup
-    MTTDragFrame1 = CreateFrame("Frame", "MTTDragFrame1", UIParent)
-    MTTDragFrame1:SetFrameStrata("tooltip") -- background, low, medium, high, dialog, fullscreen, tooltip
-    MTTDragFrame1:SetWidth(MTTW)
-    MTTDragFrame1:SetHeight(MTTH)
-    MTTDragFrame1:SetMovable(true)
-    MTTDragFrame1.texture = MTTDragFrame1:CreateTexture(nil, "BACKGROUND")
-    MTTDragFrame1.texture:SetAllPoints(true)
-    MTTDragFrame1.texture:SetColorTexture(0.0, 1.0, 0.0, 0.75) --SetColorTexture(1.0, 0.0, 0.0, 0.75)
-    MTTDragFrame1:ClearAllPoints(true)
-    MTTDragFrame1:SetPoint("TOPLEFT", WUI.db.profile.mttx, WUI.db.profile.mtty)
-    MTTDragFrame1:EnableMouse(true)
-    MTTDragFrame1:SetClampedToScreen(true)
-    MTTDragFrame1:SetMovable(true)
-    MTTDragFrame1:SetResizable(true)
-    MTTDragFrame1:Show()
-    MTTDragFrame1:SetScript("OnMouseDown", MTT1StartDrag)
-    MTTDragFrame1:SetScript("OnMouseUp", MTT1StopDrag)
-
-    ItemRefTooltip:SetOwner(MTTDragFrame1, "TOPLEFT")
+    ItemRefTooltip:SetOwner(DragFrame2, "TOPLEFT")
 	ItemRefTooltip:ClearAllPoints()
     ItemRefTooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
 
-    hooksecurefunc("GameTooltip_SetDefaultAnchor", MTTToolTipHandler)
+    frame.text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.text:SetText("ANCHOR_TOOLTIP")
+    frame.text:SetPoint("LEFT", 5, 0)
+    
+    frame.close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    frame.close:SetSize(24, 24)
+    frame.close:SetPoint("RIGHT")
 
-    MTTDragFrame1:Hide();
+    frame:Hide()
 end
 
-function MoveToolTip:OnEnable()
-       -- Create processor frame
-       MTTEventFrame = CreateFrame("frame","MTTFrame")
-       MTTEventFrame:RegisterEvent("VARIABLES_LOADED")
-       MTTEventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-       MTTEventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-       MTTEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-       MTTEventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-       MTTEventFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-       MTTEventFrame:RegisterEvent("ZONE_CHANGED")
-   
-       -- Setup MTTFrame events and handle those events
-       MTTEventFrame:SetScript("OnEvent", function(self,event,addonName)
-           -- print("EVENT: " .. event)
-           if (event == "ADDON_LOADED") then
-   
-           elseif (event == "ZONE_CHANGED") then
-   
-           elseif (event == "ZONE_CHANGED_NEW") then
-   
-           elseif (event == "ZONE_CHANGED_NEW_AREA") then
-   
-           elseif (event == "ZONE_CHANGED_INDOORS") then
-   
-           elseif (event == "PLAYER_ENTERING_WORLD") then
+function MoveTooltip:OnEnable()
+    frame:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" and not self.isMoving then
+            self:StartMoving()
+            self.isMoving = true
+        end
+    end)
 
-           elseif (event == "PLAYER_REGEN_DISABLED") then
-               MTTInCombat = true
-           elseif (event == "PLAYER_REGEN_ENABLED") then
-               MTTInCombat = false
-           else
-               -- print("MTT: WARNING: Unhandled event: [" .. event .. "]")
-           end
-       end)
+    frame:SetScript("OnMouseUp", function(self, button)
+        if button == "LeftButton" and self.isMoving then
+            self:StopMovingOrSizing()
+            self.isMoving = false
+        end
+    end)
+
+    frame:SetScript("OnHide", function(self)
+        if ( self.isMoving ) then
+            self:StopMovingOrSizing()
+            self.isMoving = false
+        end
+    end)
 end
 
-function MoveToolTip:OnDisable()
-end
-
-function MTTToolTipHandler(self)
-    self:SetOwner(MTTDragFrame1,"ANCHOR_NONE")
-    self:ClearAllPoints(true)
-    self:SetPoint("BOTTOMLEFT", MTTDragFrame1)
-end
-
-function MTT1StartDrag(self, button)
-    if button == "LeftButton" and not self.isMoving then
-        self:StartMoving()
-        self.isMoving = true
-    end
-end
-
-function MTT1StopDrag(self, button)
-    if button == "LeftButton" and self.isMoving then
-        self:StopMovingOrSizing()
-        self.isMoving = false
-        point, relativeTo, relativePoint, x, y = self:GetPoint()
-        x = self:GetLeft()
-        y = self:GetBottom()
-        local scrW = GetScreenWidth()
-        local scrH = GetScreenHeight()
-        WUI.db.profile.mttx = x
-        WUI.db.profile.mtty = y-scrH+MTTH
-    end
+function MoveTooltip:OnDisable()
 end
