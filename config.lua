@@ -80,13 +80,14 @@ config.defaults = {
 		RealmLabel          = false,
 		GuildRank           = false,
         TargetOfTarget      = true,
+        enableSpecText      = true,
         insideBar           = true,
 
         scaleFactor         = 1.0,
         showServerName      = true,
         enableClassColor    = true,
         --enableGuildColor    = true,
-        enableFactionColor  = true, -- opposite faction
+        --enableFactionColor  = true, -- opposite faction
         showUnitHealth      = true,
         healthFont          = STANDARD_TEXT_FONT,
         healthFontSize      = 13, -- 12 and 14 (default)
@@ -439,7 +440,7 @@ options = {
             args = {
                 enableClassColor = {
                     order = 1, type = "toggle",
-                    name = "Class Color", desc = "Change tooltip border, name and health bar to class color",
+                    name = "Color", desc = "Change tooltip border from player, target, npc, item quality, etc, to match color",
                     get = function(info) return WUI.db.profile.enableClassColor end,
                     set = function(info,val) WUI.db.profile.enableClassColor = val end,
                 },
@@ -491,56 +492,62 @@ options = {
                     get = function(info) return WUI.db.profile.TargetOfTarget end,
                     set = function(info,val) WUI.db.profile.TargetOfTarget = val end,
                 },
-                showUnitHealth = {
+                enableSpecText = {
                     order = 10, type = "toggle",
+                    name = "Talents Text", desc = "Show/Hide talent spec in tooltip",
+                    get = function(info) return WUI.db.profile.enableSpecText end,
+                    set = function(info,val) WUI.db.profile.enableSpecText = val end,
+                },
+                showUnitHealth = {
+                    order = 11, type = "toggle",
                     name = "Show Health Text", desc = "Show/Hide tooltip health text",
                     get = function(info) return WUI.db.profile.showUnitHealth end,
                     set = function(info,val) WUI.db.profile.showUnitHealth = val end,
                 },
                 insideBar = {
-                    order = 11, type = "toggle",
+                    order = 12, type = "toggle",
                     name = "Health Bar Inside", desc = "Place tooltip health bar inside tooltip (will reload ui)",
                     get = function(info) return WUI.db.profile.insideBar end,
                     set = function(info,val) WUI.db.profile.insideBar = val, ReloadUI() end,
                 },
                 tooltipHeader2 = {
-                    order = 12, type = "header",
+                    order = 13, type = "header",
                     name = "", desc = "",
                     get = function(info) return WUI.db.profile.HideCombat end,
                     set = function(info,val) WUI.db.profile.HideCombat = val end,
                 },
                 hideInCombat = {
-                    order = 13, type = "toggle",
+                    order = 14, type = "toggle",
                     name = "Hide in Combat", desc = "Hide tooltip when in combat",
                     get = function(info) return WUI.db.profile.hideInCombat end,
                     set = function(info,val) WUI.db.profile.hideInCombat = val end,
                 },
                 showSpellID = {
-                    order = 14, type = "toggle",
+                    order = 15, type = "toggle",
                     name = "Show Spell Id", desc = "Show spell id in tooltip",
                     get = function(info) return WUI.db.profile.showSpellID end,
                     set = function(info,val) WUI.db.profile.showSpellID = val end,
                 },
                 tooltipHeader3 = {
-                    order = 15, type = "header",
+                    order = 16, type = "header",
                     name = "Tooltip Anchor", desc = "",
                     get = function(info) return WUI.db.profile.HideCombat end,
                     set = function(info,val) WUI.db.profile.HideCombat = val end,
                 },
                 useCustomPosition = {
-                    order = 16, type = "toggle",
+                    order = 17, type = "toggle",
                     name = "Anchor to Custom Position", desc = "Anchor tooltip to a custom position",
                     get = function(info) return WUI.db.profile.useCustomPosition end,
                     set = function(info,val) WUI.db.profile.useCustomPosition = val end,
                 },
                 anchorToCursor = {
-                    order = 17, type = "toggle",
+                    order = 18, type = "toggle",
                     name = "Anchor to Cursor", desc = "Anchor tooltip to cursor",
                     get = function(info) return WUI.db.profile.anchorToCursor end,
                     set = function(info,val) WUI.db.profile.anchorToCursor = val end,
                 },
                 tooltipanchor = {
-                    order = 18, type = "group", inline = true,
+                    order = 19, type = "group", inline = true,
                     name = "",
                     args = {
                         show_anchor = {

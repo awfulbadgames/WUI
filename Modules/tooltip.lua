@@ -58,18 +58,23 @@
     Turn off nameplates to see it
 ]]
 
-local TTip = WUI:NewModule("TTip")
+TTip = WUI:NewModule("TTip", "AceEvent-3.0")
+
 u = {}
-local buffer = {} -- temp data
+
 local TARGET_PREFIX = TARGET..":|cffffffff "
+local TALENTS_PREFIX = TALENTS..":|cffffffff "
+local TALENTS_NA = NOT_APPLICABLE:lower();
+local TALENTS_NONE = NO.." "..TALENTS;
+local TALENTS_LOADING = SEARCH_LOADING_TEXT;
+
+local defaultColor = '|cffffd100'
+local whiteColor = '|cffffffff'
 
 function TTip:OnInitialize()
 end
 
 function TTip:OnEnable()
-    -- Almost useless option, but someone might find it useful
-    GameTooltip:SetScale(WUI.db.profile.scaleFactor)
-
     -- Create a string object for status bar text
     GameTooltipStatusBar.healthText = GameTooltipStatusBar:CreateFontString(nil, 'OVERLAY')
     GameTooltipStatusBar.healthText:SetFont(WUI.db.profile.healthFont, WUI.db.profile.healthFontSize, WUI.db.profile.healthFontFlags)
@@ -80,23 +85,16 @@ function TTip:OnEnable()
 
     GameTooltip:HookScript('OnShow', OnTooltipShow)
 	GameTooltip:HookScript('OnUpdate', OnTooltipShow)
-
-    hooksecurefunc('GameTooltip_ShowCompareItem', function(self)
-		if self and self.shoppingTooltips then
-			for _, tooltip in pairs(self.shoppingTooltips) do
-				local _, link = tooltip:GetItem()
-				local color = link and strmatch(link, '(|c%x+)')
-				TTip:ColorTooltip(tooltip, color)
-			end
-		end
-	end)
-
-    hooksecurefunc('GameTooltip_SetDefaultAnchor', setDefaultAnchor)
-
     GameTooltip:HookScript('OnTooltipSetSpell', onTooltipSetSpell) -- SpellBookFrame, PlayerTalentFrame, ...
+
+    hooksecurefunc('GameTooltip_ShowCompareItem', ShowCompareItem)
+    hooksecurefunc('GameTooltip_SetDefaultAnchor', setDefaultAnchor)
     hooksecurefunc(GameTooltip, 'SetUnitAura', setUnitAura) -- BuffFrame
     hooksecurefunc(GameTooltip, 'SetUnitBuff', setUnitAura) -- UnitFrame
     hooksecurefunc(GameTooltip, 'SetUnitDebuff', setUnitAura) -- UnitFrame
+
+    self:RegisterEvent("UPDATE_MOUSEOVER_UNIT", "GetSpec")
+    self:RegisterEvent("INSPECT_READY", "SpecText")
 end
 
 function TTip:OnDisable()
@@ -113,42 +111,10 @@ local function abbreviateLargeNumbers(value)
     end
 end
 
-local function constrain(value, low, high) -- not isRetail
-    return math.max(math.min(value, high), low)
-end
-
--- Fix issue #2 described in the comments above
-local function unitClassColor(unit)
-    if UnitIsPlayer(unit) then
-        --local name, str = UnitClass(unit)
-        buffer.prevColor = buffer.currColor
-        buffer.currColor = RAID_CLASS_COLORS[ select(2, UnitClass(unit)) ]
-    else
-        buffer.prevColor = buffer.currColor
-        buffer.currColor = CreateColor(0, 1, 0) -- if not a player or nil
-    end
-
-    if unit == nil then
-        buffer.currColor = buffer.prevColor
-    end
-    return buffer.currColor
-end
-
--- Fix issue #3 described in the comments above
-local function unitPlayerControlled(unit) -- isClassic_TBC
-    buffer.prevUnit = buffer.currUnit
-    buffer.currUnit = UnitPlayerControlled(unit)
-
-    if unit == nil then
-        buffer.currUnit = buffer.prevUnit
-    end
-    return buffer.currUnit
-end
-
 local function updateStatusBar(statusBar, unit)
     local isDead = unit and UnitIsDeadOrGhost(unit)
-    local isPlayerControlled = unitPlayerControlled(unit)
-    local unitColor = WUI.db.profile.enableClassColor and unitClassColor(unit) or CreateColor(0, 1, 0)
+    local color = WUI.db.profile.enableClassColor and TTip:GetClassColor(unit) or CreateColor(0, 1, 0)
+
     local currHealth = statusBar:GetValue()
     local maxHealth = select(2, statusBar:GetMinMaxValues())
     local healthText = ''
@@ -161,13 +127,12 @@ local function updateStatusBar(statusBar, unit)
         healthText = abbreviateLargeNumbers(currHealth) .. ' / ' .. abbreviateLargeNumbers(maxHealth)
     end
     statusBar.healthText:SetText(healthText)
-    statusBar:SetStatusBarColor(unitColor.r, unitColor.g, unitColor.b)
+    statusBar:SetStatusBarColor(color.r, color.g, color.b)
 
     if WUI.db.profile.insideBar then
         statusBar:ClearAllPoints()
 		statusBar:SetPoint("BOTTOMLEFT", 7, 7)
 		statusBar:SetPoint("BOTTOMRIGHT", -7, 7)
-        --GameTooltip:SetHeight(GameTooltip:GetHeight() + 51) --'11'
     end
 end
 
@@ -182,39 +147,30 @@ function onTooltipSetUnit(self)
     end
 
     local pattern = "^"..LEVEL -- LEVEL is a global variable and used in all localisations
-    
     local unit = select(2, self:GetUnit())
-    local statusBar = self:GetChildren()
-
-    local defaultColor = '|cffffd100'
-    local whiteColor = '|cffffffff'
     local unitDetail
-
-    local unitLevel, levelColor = UnitLevel(unit), defaultColor
+    local targetUnit = unit .. 'target'
+    local statusBar = self:GetChildren()
+    local unitLevel = UnitLevel(unit)
 
     if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
         unitLevel = UnitBattlePetLevel(unit)
     end
     if (unitLevel == -1) then unitLevel = '??' end
-    --if UnitCanAttack(unit, 'player') then
-    --    levelColor = TTip:GetLevelColor(unitLevel)
-    --end
-
     unitLevel = 'Level ' .. unitLevel
 
     if UnitIsPlayer(unit) then
         local unitName = GetUnitName(unit, WUI.db.profile.showServerName) -- also hides a title
-        local guildName, _, _, guildRealm = GetGuildInfo(unit) -- isClassic
-        local classColor = RAID_CLASS_COLORS[ select(2, UnitClass(unit)) ]
-        --local guildColor = WUI.db.profile.enableGuildColor and ChatTypeInfo['GUILD'] or CreateColor(1, 1, 1)
+        local guildName = GetGuildInfo(unit) --, _, _, guildRealm = GetGuildInfo(unit) -- isClassic
+        local classColor = TTip:GetClassColor(unit)
         local playerFaction = select(2, UnitFactionGroup('player'))
         local unitFaction = select(2, UnitFactionGroup(unit))
-
 		local _, unitRealmName = UnitName(unit)
-		--local unitRealmName = select(2, UnitName(unit))
 		local unitRelation = UnitRealmRelationship(unit)
 		local unitStatus = ''
-		
+
+        classColor = string.format('|cff%.2x%.2x%.2x', classColor.r * 255, classColor.g * 255, classColor.b * 255)
+
 		if (unitRealmName == nil) then unitRealmName = "" end
 
         for i = 1, self:NumLines() do
@@ -222,7 +178,6 @@ function onTooltipSetUnit(self)
             local lineText = line:GetText()
 
             if i == 1 then
-
 				if WUI.db.profile.UnitStatus then
 					if UnitIsAFK(unit) then
 						unitStatus = whiteColor .. '<' .. AFK .. '> |r'
@@ -236,7 +191,8 @@ function onTooltipSetUnit(self)
 					unitName = unitStatus .. UnitPVPName(unit)
 				end
 				
-				if WUI.db.profile.UnitRealm and unitRealmName and (unitRealmName ~= '') then
+                --if WUI.db.profile.UnitRealm and unitRealmName and (unitRealmName ~= '') then
+				if WUI.db.profile.UnitRealm and (unitRealmName ~= '') then
 					if WUI.db.profile.RealmLabel then
 						if (unitRelation == LE_REALM_RELATION_VIRTUAL) then
 							unitName = unitName .. INTERACTIVE_SERVER_LABEL
@@ -248,15 +204,13 @@ function onTooltipSetUnit(self)
 					end
 				end
 				
-                line:SetText(
-					-- Fix UnitFrame name color by using classColor.colorStr
-                    WUI.db.profile.enableClassColor and ('|c' .. classColor.colorStr .. unitName .. '|r') or unitName
-                )
+                line:SetText(WUI.db.profile.enableClassColor and (classColor .. unitName) or unitName)
             
             elseif i == 2 and guildName then
 				local guildString
 				local guildUnitRank = ''
 				local unitName, unitRealmName = UnitName(unit)
+
 				if UnitIsPlayer(unit) then
 					u.reactionIndex = TTip:GetUnitReactionIndex(unit) --(u.token);
 					u.reactionColor = WUI.db.profile["colReactText"..u.reactionIndex];
@@ -265,21 +219,18 @@ function onTooltipSetUnit(self)
 					local guild, guildRank1 = GetGuildInfo(unit);
 					local guildColor = (guild == pGuild and WUI.db.profile.colSameGuild or WUI.db.profile.colorGuildByReaction and u.reactionColor or WUI.db.profile.colGuild);
 
-					local guildName, guildRank,guildRankIndex,realmName = GetGuildInfo(unit)
+					local guildName, guildRank, guildRankIndex, realmName = GetGuildInfo(unit)
 					if guildName then
 						if WUI.db.profile.GuildRank and guildRank then
 							guildUnitRank = '|cff0080cc[' .. guildRank .. ']' .. whiteColor .. ' in '
 						end
 						if WUI.db.profile.UnitRealm then
 							if (realmName == unitRealmName) then
-								--guildString = guildUnitRank .. guildColor .. '<' .. guildName .. '>'
                                 guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '>') or guildName)
 							else
-								--guildString = guildUnitRank .. guildColor .. '<' .. guildName .. '> - ' .. realmName
                                 guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '> - ') or guildName) .. realmName
 							end
 						else
-							--guildString = guildUnitRank .. guildColor .. '<' .. guildName .. '>'
                             guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '>') or guildName)
 						end
 					else
@@ -288,8 +239,8 @@ function onTooltipSetUnit(self)
 				else
 					guildString = '<' .. gsub(guildLine:GetText(), '-.+\'s', '\'s') .. '>'
 				end
+
                 line:SetText(WUI.db.profile.showServerName and guildString or guildName)
-                --line:SetTextColor(guildColor.r, guildColor.g, guildColor.b)
 
             elseif i==2 and guildName~='' or i==3 and guildName then
                 local unitRace = UnitRace(unit)
@@ -301,48 +252,26 @@ function onTooltipSetUnit(self)
 
                 if WUI.db.profile.UnitGender then
                     local unitGender = {'', MALE, FEMALE}
-                    unitDetail = unitGender[UnitSex(unit)] .. ' ' .. unitRace .. ' ' .. (WUI.db.profile.enableClassColor and ('|c' .. classColor.colorStr .. className .. '|r') or className)
+                    unitDetail = unitGender[UnitSex(unit)] .. ' ' .. unitRace .. ' ' .. (WUI.db.profile.enableClassColor and (classColor .. className) or className)
                 else
-                    unitDetail = unitRace .. ' ' .. (WUI.db.profile.enableClassColor and ('|c' .. classColor.colorStr .. className .. '|r') or className)
+                    unitDetail = unitRace .. ' ' .. (WUI.db.profile.enableClassColor and (classColor .. className) or className)
                 end
+
                 line:SetText(unitLevel .. ' ' .. unitDetail)
 
             -- Set faction line color, if the unit (player) is from the opposite faction
-            elseif not WUI.db.profile.enableFactionColor then
+            elseif not WUI.db.profile.enableClassColor then
                 break
             elseif (lineText == FACTION_ALLIANCE or lineText == FACTION_HORDE) and playerFaction ~= unitFaction then
-                line:SetTextColor(
-                    FACTION_BAR_COLORS[1].r,
-                    FACTION_BAR_COLORS[1].g,
-                    FACTION_BAR_COLORS[1].b
-                )
+                line:SetTextColor(FACTION_BAR_COLORS[1].r, FACTION_BAR_COLORS[1].g, FACTION_BAR_COLORS[1].b)
                 break
             end
         end
 
-		-- Target of Target --
-		local targetUnit = unit .. 'target'
-
-		if WUI.db.profile.TargetOfTarget and UnitExists(targetUnit) then
-			local targetName, targetColor
-			if UnitIsUnit(targetUnit, 'player') then
-				if UnitCanAttack(unit, 'player') then
-					targetColor = '|cffcc4c38'
-				else
-					targetColor = '|cff009919'
-				end
-				targetName = '<<' .. string.upper(YOU) .. '>>'
-            else
-				if UnitIsPlayer(targetUnit) then
-					targetColor = TTip:GetClassColor(targetUnit)
-				else
-					local r, g, b = GameTooltip_UnitColor(targetUnit)
-					targetColor = string.format('|cff%.2x%.2x%.2x', r * 255, g * 255, b * 255)
-				end
-				targetName = UnitName(targetUnit)
-			end
-			GameTooltip:AddLine(defaultColor .. 'Targenting: ' .. targetColor .. targetName)
-		end
+        --Target of Target
+        if WUI.db.profile.TargetOfTarget and UnitExists(targetUnit) then
+            GameTooltip:AddLine(defaultColor .. 'Targeting: ' .. TTip:TargetOfTarget(unit))
+        end
 
     else -- If Unit is not player
         if WUI.db.profile.enableClassColor then
@@ -407,33 +336,13 @@ function onTooltipSetUnit(self)
                 end
             end
         end
-        -- Target of Target
-		local targetUnit = unit .. 'target'
-		if WUI.db.profile.TargetOfTarget and UnitExists(targetUnit) then
-			local targetName, targetColor
-			if UnitIsUnit(targetUnit, 'player') then
-				if UnitCanAttack(unit, 'player') then
-					targetColor = '|cffcc4c38'
-				else
-					targetColor = '|cff009919'
-				end
-				targetName = '<<' .. string.upper(YOU) .. '>>'
-			else
-				if UnitIsPlayer(targetUnit) then
-					targetColor = TTip:GetClassColor(targetUnit)
-				else
-					local r, g, b = GameTooltip_UnitColor(targetUnit)
-					targetColor = string.format('|cff%.2x%.2x%.2x', r * 255, g * 255, b * 255)
-				end
-				targetName = UnitName(targetUnit)
-			end
-			GameTooltip:AddLine(defaultColor .. 'Targenting: ' .. targetColor .. targetName)
-		end
+
+        --Target of Target
+        if WUI.db.profile.TargetOfTarget and UnitExists(targetUnit) then
+            GameTooltip:AddLine(defaultColor .. 'Targeting: ' .. TTip:TargetOfTarget(unit))
+        end
     end
 
-    if WUI.db.profile.insideBar then
-        GameTooltip:AddLine(" ")
-    end
     updateStatusBar(statusBar, unit)
 end
 
@@ -455,7 +364,6 @@ function setDefaultAnchor(self, parent)
     else
         self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -CONTAINER_OFFSET_X - 13, CONTAINER_OFFSET_Y)
     end
-
     -- Anchor to the mouse cursor
     if WUI.db.profile.anchorToCursor and not InCombatLockdown() and
         ( (WUI.db.profile.anchorToCursorAlt and GetMouseFocus() == WorldFrame) or not WUI.db.profile.anchorToCursorAlt ) then
@@ -501,50 +409,60 @@ function OnTooltipShow(self)
             return self:Hide()
         end
     end
+
     local color = nil
     local name, unit = self:GetUnit()
     if (not name) and (not unit) then
         local _, link = self:GetItem()
-        color = link and strmatch(link, '(|c%x+)')
-        TTip:ColorTooltip(self, color)
+        local quality = link and select(3, GetItemInfo(link)) or nil
+        if (quality) then
+            local r, g, b = GetItemQualityColor(quality)
+            color = { r = r, g = g, b = b}
+            TTip:ColorTooltip(self, color)
+        end
     else
         if UnitIsPlayer(unit) then -- or UnitPlayerControlled(unit)) then
-            --color = unit and TTip:GetUnitColor(unit)
-            local classColor = RAID_CLASS_COLORS[ select(2, UnitClass(unit)) ]
-            color = unit and '|c' .. classColor.colorStr
-            TTip:ColorTooltip(self, color)
-        else
+            color = TTip:GetClassColor(unit)
             TTip:ColorTooltip(self, color)
         end
     end
 end
 
+function ShowCompareItem(self)
+    if self and self.shoppingTooltips then
+        for _, tooltip in pairs(self.shoppingTooltips) do
+            local name, item = tooltip:GetItem()
+            if (item) then
+                local quality = select(3, GetItemInfo(item))
+                local color
+                if (quality) then
+                    local r, g, b = GetItemQualityColor(quality)
+                    color = { r = r, g = g, b = b}
+                    TTip:ColorTooltip(tooltip, color)
+                end
+            end
+        end
+    end
+end
+
 function TTip:ColorTooltip(tooltip, color)
-	local r, g, b = 0.65, 0.65, 0.65
-	if WUI.db.profile.enableClassColor then
-		if color and (strlen(color) == 10) then
-			r = tonumber(strsub(color, 5, 6), 16) / 255
-			g = tonumber(strsub(color, 7, 8), 16) / 255
-			b = tonumber(strsub(color, 9), 16) / 255
-		end
-	end
-	tooltip:SetBackdropBorderColor(r * 1.2, g * 1.2, b * 1.2)
+    if WUI.db.profile.enableClassColor then
+	    tooltip:SetBackdropBorderColor(color.r, color.g, color.b)
+    end
 end
 
 function TTip:GetClassColor(unit)
-	local name, str = UnitClass(unit)
-	local color = RAID_CLASS_COLORS[str]
-	color = string.format('|cff%.2x%.2x%.2x', color.r * 255, color.g * 255, color.b * 255)
-	return color, name
-end
-
-function TTip:GetLevelColor(level)
-	local color = colLevel --'|cffff3333'
-	if (level ~= '??') then
-		color = GetQuestDifficultyColor(level)
-		color = string.format('|cff%.2x%.2x%.2x', color.r * 255, color.g * 255, color.b * 255)
-	end
-	return color
+    local name, str = UnitClass(unit)
+    local color
+    if UnitIsPlayer(unit) then
+        color = RAID_CLASS_COLORS[str]
+    else
+        color = CreateColor(0, 1, 0) -- if not a player or nil
+    end
+    if unit == nil then
+        color = CreateColor(0, 1, 0) -- if not a player or nil
+    end
+    return color
 end
 
 function TTip:GetUnitReactionIndex(unit)
@@ -565,5 +483,67 @@ function TTip:GetUnitReactionIndex(unit)
 	else
 		local reaction = (UnitReaction(unit,"player") or 3);
 		return (reaction > 5 and 5) or (reaction < 2 and 2) or (reaction);
+	end
+end
+
+function TTip:TargetOfTarget(unit)
+    local targetUnit = unit .. 'target'
+    local targetName, targetColor
+    if UnitIsUnit(targetUnit, 'player') then
+        if UnitCanAttack(unit, 'player') then
+            targetColor = '|cffcc4c38'
+        else
+            targetColor = '|cff009919'
+        end
+        targetName = '<<' .. string.upper(YOU) .. '>>'
+    else
+        if UnitIsPlayer(targetUnit) then
+            targetColor = TTip:GetClassColor(targetUnit)
+            targetColor = string.format('|cff%.2x%.2x%.2x', targetColor.r * 255, targetColor.g * 255, targetColor.b * 255)
+        else
+            local r, g, b = GameTooltip_UnitColor(targetUnit)
+            targetColor = string.format('|cff%.2x%.2x%.2x', r * 255, g * 255, b * 255)
+        end
+        targetName = UnitName(targetUnit)
+    end
+    return WUI.db.profile.enableClassColor and (targetColor .. targetName) or (whiteColor .. targetName)
+end
+
+function TTip:GetSpec()
+    local talentsGUID
+	if CanInspect("mouseover") and WUI.db.profile.enableSpecText then
+        local level = UnitLevel(UnitGUID("mouseover"))
+		if UnitLevel("mouseover") >= 10 then
+            if InspectFrame and InspectFrame:IsShown() then
+                GameTooltip:AddLine(TALENTS_PREFIX .. '|cffff0000' .. "Inspect Frame is open")
+            elseif Examiner and Examiner:IsShown() then
+                GameTooltip:AddLine(TALENTS_PREFIX .. '|cffff0000' .. "Inspect Frame is open")
+            else
+                talentsGUID = UnitGUID("mouseover")
+                NotifyInspect("mouseover")
+                GameTooltip:AddLine(TALENTS_PREFIX .. TALENTS_LOADING)
+            end
+		end
+	end
+    if WUI.db.profile.insideBar then --and WUI.db.profile.TargetOfTarget or WUI.db.profile.enableSpecText then
+        GameTooltip:AddLine(" ")
+    end
+    GameTooltip:Show()
+end
+
+function TTip:SpecText()
+	local specName, specNumber, left, leftText
+	if UnitExists("mouseover") then
+		specNumber = GetInspectSpecialization("mouseover")
+        for i=1, GameTooltip:NumLines() do
+            if _G[GameTooltip:GetName().."TextLeft"..i]:GetText() == TALENTS_PREFIX .. TALENTS_LOADING then
+                if not specNumber or specNumber == 0 or specNumber >= 1440 then
+                    specName = TALENTS_NONE
+                else
+                    specName = select(2, GetSpecializationInfoByID(specNumber))
+                end
+                _G[GameTooltip:GetName().."TextLeft"..i]:SetText(TALENTS_PREFIX .. specName)
+            end
+        end
 	end
 end

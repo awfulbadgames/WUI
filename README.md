@@ -91,7 +91,3 @@ MIT license
 - Libraries from Ace3:
 
 https://www.curseforge.com/wow/addons/ace3
-
-## Donation
-
-[![paypal](https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)](https://www.paypal.com/donate?business=NW2RZCWTRC2ZE&currency_code=BRL)
