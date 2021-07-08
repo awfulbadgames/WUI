@@ -1,8 +1,8 @@
-## Interface: 90005
+## Interface: 90100
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
-## Version: 1.9
+## Version: 1.10
 ## SavedVariables: WUIDB
 
 ## X-Category: Unit Frames, Miscellaneous
