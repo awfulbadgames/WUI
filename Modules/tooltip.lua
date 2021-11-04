@@ -418,14 +418,17 @@ function OnTooltipShow(self)
         if (quality) then
             local r, g, b = GetItemQualityColor(quality)
             color = { r = r, g = g, b = b}
-            TTip:ColorTooltip(self, color)
+		else
+			color = CreateColor(1, 1, 1)
         end
     else
         if UnitIsPlayer(unit) then -- or UnitPlayerControlled(unit)) then
             color = TTip:GetClassColor(unit)
-            TTip:ColorTooltip(self, color)
+		else
+		    color = CreateColor(1, 1, 1)
         end
     end
+	TTip:ColorTooltip(self, color)
 end
 
 function ShowCompareItem(self)
@@ -447,7 +450,21 @@ end
 
 function TTip:ColorTooltip(tooltip, color)
     if WUI.db.profile.enableClassColor then
-	    tooltip:SetBackdropBorderColor(color.r, color.g, color.b)
+		if not tooltip.SetBackdrop then
+			Mixin(tooltip, BackdropTemplateMixin)
+		end
+		backdrop = {
+			--bgFile = "Interface\\TutorialFrame\\TutorialFrameBackground",
+			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+			--tile = true,
+			--tileEdge = true,
+			tileSize = 16,
+			edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 }
+			--insets = { left = 3, right = 5, top = 3, bottom = 5 }
+		}
+		tooltip:SetBackdrop(backdrop)
+		tooltip:SetBackdropBorderColor(color.r, color.g, color.b)
     end
 end
 
