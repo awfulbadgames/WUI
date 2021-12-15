@@ -115,8 +115,8 @@ local function updateStatusBar(statusBar, unit)
     local isDead = unit and UnitIsDeadOrGhost(unit)
     local color = WUI.db.profile.enableClassColor and TTip:GetClassColor(unit) or CreateColor(0, 1, 0)
 
-    local currHealth = statusBar:GetValue()
-    local maxHealth = select(2, statusBar:GetMinMaxValues())
+    local currHealth = UnitHealth(unit)		--statusBar:GetValue()
+    local maxHealth = UnitHealthMax(unit)	--select(2, statusBar:GetMinMaxValues())
     local healthText = ''
 
     if not WUI.db.profile.showUnitHealth then
@@ -126,8 +126,10 @@ local function updateStatusBar(statusBar, unit)
     else
         healthText = abbreviateLargeNumbers(currHealth) .. ' / ' .. abbreviateLargeNumbers(maxHealth)
     end
-    statusBar.healthText:SetText(healthText)
-    statusBar:SetStatusBarColor(color.r, color.g, color.b)
+    --statusBar.healthText:SetText(healthText)
+    --statusBar:SetStatusBarColor(color.r, color.g, color.b)
+	GameTooltipStatusBar.healthText:SetText(healthText)
+	GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
 
     if WUI.db.profile.insideBar then
         statusBar:ClearAllPoints()
@@ -454,7 +456,7 @@ function TTip:ColorTooltip(tooltip, color)
 			Mixin(tooltip, BackdropTemplateMixin)
 		end
 		backdrop = {
-			--bgFile = "Interface\\TutorialFrame\\TutorialFrameBackground",
+			bgFile = "Interface\\TutorialFrame\\TutorialFrameBackground",
 			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 			--tile = true,
 			--tileEdge = true,
