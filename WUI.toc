@@ -1,8 +1,8 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
-## Version: 1.12
+## Version: 1.13
 ## SavedVariables: WUIDB
 
 ## X-Category: Unit Frames, Miscellaneous
