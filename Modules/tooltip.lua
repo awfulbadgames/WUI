@@ -115,8 +115,6 @@ local function updateStatusBar(statusBar, unit)
     local isDead = unit and UnitIsDeadOrGhost(unit)
     local color = WUI.db.profile.enableClassColor and TTip:GetClassColor(unit) or CreateColor(0, 1, 0)
 
-    --local currHealth = UnitHealth(unit)		--statusBar:GetValue()
-    --local maxHealth = UnitHealthMax(unit)	--select(2, statusBar:GetMinMaxValues())
     local currHealth = statusBar:GetValue()
     local maxHealth = select(2, statusBar:GetMinMaxValues())
     local healthText = ''
@@ -130,8 +128,6 @@ local function updateStatusBar(statusBar, unit)
     end
     statusBar.healthText:SetText(healthText)
     statusBar:SetStatusBarColor(color.r, color.g, color.b)
-	--GameTooltipStatusBar.healthText:SetText(healthText)
-	--GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
 
     if WUI.db.profile.insideBar then
         statusBar:ClearAllPoints()
@@ -347,7 +343,7 @@ function onTooltipSetUnit(self)
         end
     end
 
-    updateStatusBar(statusBar, unit)
+    --updateStatusBar(statusBar, unit)
 end
 
 function onValueChanged(self)
