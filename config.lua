@@ -73,6 +73,8 @@ config.defaults = {
         raidframescale = 1,
 
         --Tooltip
+        enableTooltipChanges= true,
+
         UnitTitle           = true,
 		UnitGender          = false,
 		UnitStatus          = true,
@@ -438,8 +440,14 @@ options = {
             type = 'group',
             order = 6,
             args = {
-                enableClassColor = {
+                enableTooltipChanges = {
                     order = 1, type = "toggle",
+                    name = "Tooltip Changes", desc = "Enable/Disable Tooltip changes. Overrides all options (will reload ui)",
+                    get = function(info) return WUI.db.profile.enableTooltipChanges end,
+                    set = function(info,val) WUI.db.profile.enableTooltipChanges = val, ReloadUI() end,
+                },
+                enableClassColor = {
+                    order = 1.1, type = "toggle",
                     name = "Color", desc = "Change tooltip border from player, target, npc, item quality, etc, to match color",
                     get = function(info) return WUI.db.profile.enableClassColor end,
                     set = function(info,val) WUI.db.profile.enableClassColor = val end,

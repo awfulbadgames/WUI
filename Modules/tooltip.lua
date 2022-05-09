@@ -75,6 +75,9 @@ function TTip:OnInitialize()
 end
 
 function TTip:OnEnable()
+    if not WUI.db.profile.enableTooltipChanges then
+        return
+    end
     -- Create a string object for status bar text
     GameTooltipStatusBar.healthText = GameTooltipStatusBar:CreateFontString(nil, 'OVERLAY')
     GameTooltipStatusBar.healthText:SetFont(WUI.db.profile.healthFont, WUI.db.profile.healthFontSize, WUI.db.profile.healthFontFlags)
@@ -137,21 +140,34 @@ local function updateStatusBar(statusBar, unit)
 end
 
 function onTooltipSetUnit(self)
+    -- Hold LMB or RMB but do not rotate the camera, just move your character
+    -- The cursor should not disappear from the screen at this moment, it will follow the movement of your character
+    -- Thus, as long as the cursor is following your character's movement, GetUnit() will always return nil
+    if IsMouseButtonDown('LeftButton') or IsMouseButtonDown('RightButton') then
+        return self:Hide() -- fix the issue
+    end
+
+    local unit = TTip:fixGetUnit(self)
+
     if WUI.db.profile.hideInCombat then
         if InCombatLockdown() and GetMouseFocus() == WorldFrame then
             return self:Hide()
         end
     end
-    if IsMouseButtonDown('LeftButton') or IsMouseButtonDown('RightButton') then
-        return self:Hide() -- fix issue #1 described in the comments above
-    end
 
     local pattern = "^"..LEVEL -- LEVEL is a global variable and used in all localisations
-    local unit = select(2, self:GetUnit())
+    --local unit = select(2, self:GetUnit())
     local unitDetail
-    local targetUnit = unit .. 'target'
+    local targetUnit 
+    local unitLevel
+    if UnitExists(unit) then
+        targetUnit = unit .. 'target'
+        unitLevel = UnitLevel(unit)
+    else
+        targetUnit = ''
+        unitLevel = ''
+    end
     local statusBar = self:GetChildren()
-    local unitLevel = UnitLevel(unit)
 
     if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
         unitLevel = UnitBattlePetLevel(unit)
@@ -212,14 +228,13 @@ function onTooltipSetUnit(self)
 				local unitName, unitRealmName = UnitName(unit)
 
 				if UnitIsPlayer(unit) then
-					u.reactionIndex = TTip:GetUnitReactionIndex(unit) --(u.token);
-					u.reactionColor = WUI.db.profile["colReactText"..u.reactionIndex];
+					u.reactionIndex = TTip:GetUnitReactionIndex(unit) --(u.token)
+					u.reactionColor = WUI.db.profile["colReactText"..u.reactionIndex]
 
-					local pGuild = GetGuildInfo("player");
-					local guild, guildRank1 = GetGuildInfo(unit);
-					local guildColor = (guild == pGuild and WUI.db.profile.colSameGuild or WUI.db.profile.colorGuildByReaction and u.reactionColor or WUI.db.profile.colGuild);
+					local pGuild = GetGuildInfo("player")
+                    local guildName, guildRank, guildRankIndex, realmName = GetGuildInfo(unit)
+					local guildColor = (guildName == pGuild and WUI.db.profile.colSameGuild or WUI.db.profile.colorGuildByReaction and u.reactionColor or WUI.db.profile.colGuild)
 
-					local guildName, guildRank, guildRankIndex, realmName = GetGuildInfo(unit)
 					if guildName then
 						if WUI.db.profile.GuildRank and guildRank then
 							guildUnitRank = '|cff0080cc[' .. guildRank .. ']' .. whiteColor .. ' in '
@@ -228,7 +243,12 @@ function onTooltipSetUnit(self)
 							if (realmName == unitRealmName) then
                                 guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '>') or guildName)
 							else
-                                guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '> - ') or guildName) .. realmName
+                                --print(realmName)
+                                if realmName == nil then
+                                    guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '>') or guildName)
+                                else
+                                    guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '> - ') or guildName) .. realmName
+                                end
 							end
 						else
                             guildString = guildUnitRank .. (WUI.db.profile.colorGuildByReaction and (guildColor .. '<' .. guildName .. '>') or guildName)
@@ -342,7 +362,6 @@ function onTooltipSetUnit(self)
             GameTooltip:AddLine(defaultColor .. 'Targeting: ' .. TTip:TargetOfTarget(unit))
         end
     end
-
     --updateStatusBar(statusBar, unit)
 end
 
@@ -410,7 +429,7 @@ function OnTooltipShow(self)
         end
     end
 
-    local color = nil
+    local color
     local name, unit = self:GetUnit()
     if (not name) and (not unit) then
         local _, link = self:GetItem()
@@ -469,17 +488,20 @@ function TTip:ColorTooltip(tooltip, color)
 end
 
 function TTip:GetClassColor(unit)
-    local name, str = UnitClass(unit)
-    local color
+    --local color
+    local unitType = unit and UnitGUID(unit):match('^(.-)%-'):lower()
+    local unitIsPlayer = unitType == 'player'
+    local unitClassColor = unitIsPlayer and RAID_CLASS_COLORS[ select(2, UnitClass(unit)) ]
+    --[[
     if UnitIsPlayer(unit) then
-        color = RAID_CLASS_COLORS[str]
+        color = unitClassColor --RAID_CLASS_COLORS[str]
     else
         color = CreateColor(0, 1, 0) -- if not a player or nil
     end
     if unit == nil then
         color = CreateColor(0, 1, 0) -- if not a player or nil
-    end
-    return color
+    end]]--
+    return unitClassColor --color
 end
 
 function TTip:GetUnitReactionIndex(unit)
@@ -563,4 +585,20 @@ function TTip:SpecText()
             end
         end
 	end
+end
+
+function TTip:fixGetUnit(tooltip)
+    local unit = select(2, tooltip:GetUnit())
+
+    -- When the mouse is over a UnitFrame
+    if not unit then
+        local frame = GetMouseFocus()
+        unit = frame and frame.GetAttribute and frame:GetAttribute('unit') -- fix the issue
+    end
+
+    -- When the mouse is over a WorldFrame and nameplates are not displayed
+    if not unit and UnitExists('mouseover') then
+        unit = 'mouseover' -- fix the issue
+    end
+    return unit
 end
