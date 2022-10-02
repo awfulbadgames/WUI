@@ -10,7 +10,11 @@ WUI is a simple and lightweight addon that do some changes to the default Blizza
 
 ### - Addon Installation
 
-To install just place the unzipped folder into <World of Warcraft\_retail_\Interface\AddOns>
+Retail:
+To install just place the unzipped folder into <World of Warcraft \ _retail_ \ Interface \ AddOns>
+
+Wrath Classic:
+To install just place the unzipped folder into <World of Warcraft \ _classic_ \ Interface \ AddOns>
 
 ### - Customizable
 
@@ -18,11 +22,21 @@ Just type in chat "/wui" to open customization options panel
 
 ### - Features
 
+##### - Retail:
+
 Changes to the Buffs Frame
 Changes to the Minimap Frame
 Changes to the Chat Frame
 Changes to the Unit Frames
 Changes to the Tooltip Frame
+Keybind integrated
+Some quality of life options
+
+##### - Wrath Classic:
+
+Changes to the Buffs Frame
+Changes to the Minimap Frame
+Changes to the Unit Frames
 Keybind integrated
 Some quality of life options
 
@@ -38,6 +52,7 @@ List of some addons that works great with WUI
 
 BlizzMove - https://www.curseforge.com/wow/addons/blizzmove
 Dominos - https://www.curseforge.com/wow/addons/dominos
+TipTac - https://github.com/frozn/TipTac
 
 ### Based on and used code in parts or totally from some addons ###
 
