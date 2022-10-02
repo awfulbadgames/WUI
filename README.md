@@ -10,11 +10,11 @@ WUI is a simple and lightweight addon that do some changes to the default Blizza
 
 ### - Addon Installation
 
-Retail:
-To install just place the unzipped folder into <World of Warcraft \ _retail_ \ Interface \ AddOns>
+#### Retail:
+##### To install just place the unzipped folder into <World of Warcraft \ _retail_ \ Interface \ AddOns>
 
-Wrath Classic:
-To install just place the unzipped folder into <World of Warcraft \ _classic_ \ Interface \ AddOns>
+#### Wrath Classic:
+##### To install just place the unzipped folder into <World of Warcraft \ _classic_ \ Interface \ AddOns>
 
 ### - Customizable
 
