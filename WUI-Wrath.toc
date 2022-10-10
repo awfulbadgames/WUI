@@ -1,4 +1,4 @@
-## Interface: 90207
+## Interface: 30400
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
@@ -28,12 +28,8 @@ Modules\align.lua
 Modules\autoscreenshot.lua
 Modules\buffs.lua
 Modules\castingbar.lua
-Modules\chat.lua
 Modules\easydelete.lua
 Modules\keybind.lua
-Modules\movetooltip.lua
 Modules\minimap.lua
 Modules\stats.lua
-Modules\talkinghead.lua
-Modules\tooltip.lua
 Modules\unitframes.lua
