@@ -29,10 +29,13 @@ end
 function UnitFrames:Update()
   self:PlayerFrameClassColor()
   self:TargetFrameClassColor()
+  self:FocusFrameClassColor()
   self:PlayerFrame()
   self:TargetFrame()
+  self:FocusFrame()
   self:PlayerPortrait()
   self:TargetPortrait()
+  self:FocusPortrait()
   self:RaidFrameScale()
 end
 
@@ -49,6 +52,14 @@ function UnitFrames:TargetFrameClassColor()
     self:ClassColor(TargetFrameHealthBar)
   else
     TargetFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
+  end
+end
+
+function UnitFrames:FocusFrameClassColor()
+  if WUI.db.profile.focusframeclasscolor then
+    self:ClassColor(FocusFrameHealthBar)
+  else
+    FocusFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
   end
 end
 
@@ -74,6 +85,17 @@ function UnitFrames:TargetFrame()
   a:SetMovable(false)
 end
 
+function UnitFrames:FocusFrame()
+  local _
+  local a = _G.FocusFrame
+  a:SetMovable(true)
+  a:SetUserPlaced(true)
+  a:ClearAllPoints()
+  a:SetPoint(WUI.db.profile.focusframepoint, WUI.db.profile.focusframerelativeTo, WUI.db.profile.focusframerelativePoint, WUI.db.profile.focusframex, WUI.db.profile.focusframey)
+  a:SetScale(WUI.db.profile.focusframescale)
+  a:SetMovable(false)
+end
+
 function UnitFrames:ClassColor(b)
   local statusbar = b
   local unit = b.unit
@@ -88,6 +110,15 @@ function UnitFrames:ClassColor(b)
   end
 
   if WUI.db.profile.targetframeclasscolor and unit == "target" then
+      local _, class, color
+      if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
+        _, class = UnitClass(unit)
+        color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+        statusbar:SetStatusBarColor(color.r, color.g, color.b)
+      end
+  end
+  
+    if WUI.db.profile.focusframeclasscolor and unit == "focus" then
       local _, class, color
       if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
         _, class = UnitClass(unit)
@@ -113,6 +144,14 @@ function UnitFrames:TargetPortrait()
   end
 end
 
+function UnitFrames:FocusPortrait()
+  if WUI.db.profile.focusportrait then
+    self:ClassPortrait(FocusFrame)
+  else
+    self:ClassPortrait(FocusFrame)
+  end
+end
+
 function UnitFrames:RaidFrameScale()
   CompactRaidFrameContainer:SetScale(WUI.db.profile.raidframescale)
 end
@@ -132,6 +171,14 @@ function UnitFrames:ClassPortrait(frame)
 
   if (frame.portrait and (frame.unit == "target" or frame.unit == "targettarget")) then
     if WUI.db.profile.targetportrait then
+      self:Portrait(frame)
+    else
+      self:DefaultPortrait(frame)
+    end
+  end
+  
+  if (frame.unit == "focus" and frame.portrait) then
+    if WUI.db.profile.focusportrait then
       self:Portrait(frame)
     else
       self:DefaultPortrait(frame)

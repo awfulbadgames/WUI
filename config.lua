@@ -63,8 +63,10 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 			--Unitframes
 			playerframeclasscolor   = true,
 			targetframeclasscolor   = true,
+			focusframeclasscolor	= true,
 			playerportrait          = true,
 			targetportrait          = true,
+			focusportrait          	= true,
 		
 			playerframepoint            = select(1,PlayerFrame:GetPoint()),
 			playerframerelativeTo       = select(2,PlayerFrame:GetPoint()),
@@ -78,7 +80,13 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 			targetframex                = 850, --select(4,TargetFrame:GetPoint()),
 			targetframey                = -570, --select(5,TargetFrame:GetPoint()),
 			targetframescale            = 1, --TargetFrame:GetScale(),
-		
+			focusframepoint            = select(1,FocusFrame:GetPoint()),
+			focusframerelativeTo       = select(2,FocusFrame:GetPoint()),
+			focusframerelativePoint    = select(3,FocusFrame:GetPoint()),
+			focusframex                = 260, --select(4,TargetFrame:GetPoint()),
+			focusframey                = -340, --select(5,TargetFrame:GetPoint()),
+			focusframescale            = 1, --TargetFrame:GetScale(),
+			
 			raidframescale = 1,
 
 			--Tooltip
@@ -446,17 +454,8 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 							UnitFrames:PlayerFrameClassColor()
 						end,
 					},
-					targetframeclasscolor = {
-						order = 2, type = "toggle",
-						name = "Target Class Color", desc = "Change health bar color of target frame to class color",
-						get = function(info) return WUI.db.profile.targetframeclasscolor end,
-						set = function(info,val)
-							WUI.db.profile.targetframeclasscolor = val
-							UnitFrames:TargetFrameClassColor()
-						end,
-					},
 					playerportrait = {
-						order = 3, type = "toggle",
+						order = 2, type = "toggle",
 						name = "Player Class Icon Portrait", desc = "Change the player frame portrait to class icon",
 						get = function(info) return WUI.db.profile.playerportrait end,
 						set = function(info,val)
@@ -464,8 +463,21 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 							UnitFrames:PlayerPortrait()
 						end,
 					},
-					targetportrait = {
+					unitframesHeader1 = {
+						order = 3, type = "header",
+						name = "", desc = "",
+					},
+					targetframeclasscolor = {
 						order = 4, type = "toggle",
+						name = "Target Class Color", desc = "Change health bar color of target frame to class color",
+						get = function(info) return WUI.db.profile.targetframeclasscolor end,
+						set = function(info,val)
+							WUI.db.profile.targetframeclasscolor = val
+							UnitFrames:TargetFrameClassColor()
+						end,
+					},
+					targetportrait = {
+						order = 5, type = "toggle",
 						name = "Target Class Icon Portrait", desc = "Change the target frame portrait to class icon",
 						get = function(info) return WUI.db.profile.targetportrait end,
 						set = function(info,val)
@@ -473,8 +485,30 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 							UnitFrames:TargetPortrait()
 						end,
 					},
+					unitframesHeader2 = {
+						order = 6, type = "header",
+						name = "", desc = "",
+					},
+					focusframeclasscolor = {
+						order = 7, type = "toggle",
+						name = "Focus Class Color", desc = "Change health bar color of focus frame to class color",
+						get = function(info) return WUI.db.profile.focusframeclasscolor end,
+						set = function(info,val)
+							WUI.db.profile.focusframeclasscolor = val
+							UnitFrames:FocusFrameClassColor()
+						end,
+					},
+					focusportrait = {
+						order = 8, type = "toggle",
+						name = "Focus Class Icon Portrait", desc = "Change the target frame portrait to class icon",
+						get = function(info) return WUI.db.profile.focusportrait end,
+						set = function(info,val)
+							WUI.db.profile.focusportrait = val
+							UnitFrames:FocusPortrait()
+						end,
+					},
 					playerframestweaks = {
-						order = 5, type = "group", inline = true,
+						order = 9, type = "group", inline = true,
 						name = "Player Frames Tweaks",
 						args = {
 							playerframex = {
@@ -507,7 +541,7 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 						},
 					},
 					targetframestweaks = {
-						order = 6, type = "group", inline = true,
+						order = 10, type = "group", inline = true,
 						name = "Target Frames Tweaks",
 						args = {
 							targetframex = {
@@ -539,8 +573,41 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 							},
 						},
 					},
+					focusframestweaks = {
+						order = 11, type = "group", inline = true,
+						name = "Focus Frames Tweaks",
+						args = {
+							focusframex = {
+								order = 1, type = "range", min = 0, max = floor(tonumber(GetScreenWidth())), step = 1, bigStep = 10,
+								name = "Focus Frame X", desc = "Change focus frame X position",
+								get = function(info) return WUI.db.profile.focusframex end,
+								set = function(info,val)
+									WUI.db.profile.focusframex = val
+									UnitFrames:FocusFrame()
+								end,
+							},
+							focusframey = {
+								order = 2, type = "range", min = -(floor(tonumber(GetScreenHeight()))), max = 500, step = 1, bigStep = 10,
+								name = "Focus Frame Y", desc = "Change focus frame Y position",
+								get = function(info) return WUI.db.profile.focusframey end,
+								set = function(info,val)
+									WUI.db.profile.focusframey = val
+									UnitFrames:FocusFrame()
+								end,
+							},
+							focusframescale = {
+								order = 3, type = "range", min = 0.1, max = 2.0,
+								name = "Focus Frame Scale", desc = "Change focus frame scale",
+								get = function(info) return WUI.db.profile.focusframescale end,
+								set = function(info,val)
+									WUI.db.profile.focusframescale = val
+									UnitFrames:FocusFrame()
+								end,
+							},
+						},
+					},
 					raidframescale = {
-						order = 7, type = "range", min = 0.1, max = 2,
+						order = 12, type = "range", min = 0.1, max = 2,
 						name = "Raid Frame Scale", desc = "Change raid frame scale",
 						get = function(info) return WUI.db.profile.raidframescale end,
 						set = function(info,val)
@@ -610,8 +677,10 @@ else
 			--Unitframes
 			playerframeclasscolor   = true,
 			targetframeclasscolor   = true,
+			focusframeclasscolor	= true,
 			playerportrait          = true,
 			targetportrait          = true,
+			focusportrait          	= true,
 		
 			playerframepoint            = select(1,PlayerFrame:GetPoint()),
 			playerframerelativeTo       = select(2,PlayerFrame:GetPoint()),
@@ -625,7 +694,13 @@ else
 			targetframex                = 850, --select(4,TargetFrame:GetPoint()),
 			targetframey                = -603, --select(5,TargetFrame:GetPoint()),
 			targetframescale            = 1.3, --TargetFrame:GetScale(),
-		
+			focusframepoint            = select(1,FocusFrame:GetPoint()),
+			focusframerelativeTo       = select(2,FocusFrame:GetPoint()),
+			focusframerelativePoint    = select(3,FocusFrame:GetPoint()),
+			focusframex                = 260, --select(4,TargetFrame:GetPoint()),
+			focusframey                = -340, --select(5,TargetFrame:GetPoint()),
+			focusframescale            = 1, --TargetFrame:GetScale(),
+			
 			raidframescale = 1,
 
 			--Tooltip
@@ -1138,17 +1213,8 @@ else
 							UnitFrames:PlayerFrameClassColor()
 						end,
 					},
-					targetframeclasscolor = {
-						order = 2, type = "toggle",
-						name = "Target Class Color", desc = "Change health bar color of target frame to class color",
-						get = function(info) return WUI.db.profile.targetframeclasscolor end,
-						set = function(info,val)
-							WUI.db.profile.targetframeclasscolor = val
-							UnitFrames:TargetFrameClassColor()
-						end,
-					},
 					playerportrait = {
-						order = 3, type = "toggle",
+						order = 2, type = "toggle",
 						name = "Player Class Icon Portrait", desc = "Change the player frame portrait to class icon",
 						get = function(info) return WUI.db.profile.playerportrait end,
 						set = function(info,val)
@@ -1156,8 +1222,21 @@ else
 							UnitFrames:PlayerPortrait()
 						end,
 					},
-					targetportrait = {
+					unitframesHeader1 = {
+						order = 3, type = "header",
+						name = "", desc = "",
+					},
+					targetframeclasscolor = {
 						order = 4, type = "toggle",
+						name = "Target Class Color", desc = "Change health bar color of target frame to class color",
+						get = function(info) return WUI.db.profile.targetframeclasscolor end,
+						set = function(info,val)
+							WUI.db.profile.targetframeclasscolor = val
+							UnitFrames:TargetFrameClassColor()
+						end,
+					},
+					targetportrait = {
+						order = 5, type = "toggle",
 						name = "Target Class Icon Portrait", desc = "Change the target frame portrait to class icon",
 						get = function(info) return WUI.db.profile.targetportrait end,
 						set = function(info,val)
@@ -1165,8 +1244,30 @@ else
 							UnitFrames:TargetPortrait()
 						end,
 					},
+					unitframesHeader2 = {
+						order = 6, type = "header",
+						name = "", desc = "",
+					},
+					focusframeclasscolor = {
+						order = 7, type = "toggle",
+						name = "Focus Class Color", desc = "Change health bar color of focus frame to class color",
+						get = function(info) return WUI.db.profile.focusframeclasscolor end,
+						set = function(info,val)
+							WUI.db.profile.focusframeclasscolor = val
+							UnitFrames:FocusFrameClassColor()
+						end,
+					},
+					focusportrait = {
+						order = 8, type = "toggle",
+						name = "Focus Class Icon Portrait", desc = "Change the target frame portrait to class icon",
+						get = function(info) return WUI.db.profile.focusportrait end,
+						set = function(info,val)
+							WUI.db.profile.focusportrait = val
+							UnitFrames:FocusPortrait()
+						end,
+					},
 					playerframestweaks = {
-						order = 5, type = "group", inline = true,
+						order = 9, type = "group", inline = true,
 						name = "Player Frames Tweaks",
 						args = {
 							playerframex = {
@@ -1199,7 +1300,7 @@ else
 						},
 					},
 					targetframestweaks = {
-						order = 6, type = "group", inline = true,
+						order = 10, type = "group", inline = true,
 						name = "Target Frames Tweaks",
 						args = {
 							targetframex = {
@@ -1231,8 +1332,41 @@ else
 							},
 						},
 					},
+					focusframestweaks = {
+						order = 11, type = "group", inline = true,
+						name = "Focus Frames Tweaks",
+						args = {
+							focusframex = {
+								order = 1, type = "range", min = 0, max = floor(tonumber(GetScreenWidth())), step = 1, bigStep = 10,
+								name = "Focus Frame X", desc = "Change focus frame X position",
+								get = function(info) return WUI.db.profile.focusframex end,
+								set = function(info,val)
+									WUI.db.profile.focusframex = val
+									UnitFrames:FocusFrame()
+								end,
+							},
+							focusframey = {
+								order = 2, type = "range", min = -(floor(tonumber(GetScreenHeight()))), max = 500, step = 1, bigStep = 10,
+								name = "Focus Frame Y", desc = "Change focus frame Y position",
+								get = function(info) return WUI.db.profile.focusframey end,
+								set = function(info,val)
+									WUI.db.profile.focusframey = val
+									UnitFrames:FocusFrame()
+								end,
+							},
+							focusframescale = {
+								order = 3, type = "range", min = 0.1, max = 2.0,
+								name = "Focus Frame Scale", desc = "Change focus frame scale",
+								get = function(info) return WUI.db.profile.focusframescale end,
+								set = function(info,val)
+									WUI.db.profile.focusframescale = val
+									UnitFrames:FocusFrame()
+								end,
+							},
+						},
+					},
 					raidframescale = {
-						order = 7, type = "range", min = 0.1, max = 2,
+						order = 12, type = "range", min = 0.1, max = 2,
 						name = "Raid Frame Scale", desc = "Change raid frame scale",
 						get = function(info) return WUI.db.profile.raidframescale end,
 						set = function(info,val)
