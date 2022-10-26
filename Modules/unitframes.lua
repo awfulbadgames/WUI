@@ -8,6 +8,18 @@ http://www.arenajunkies.com/topic/222642-default-ui-scripts/
 
 UnitFrames = WUI:NewModule("UnitFrames", "AceEvent-3.0", "AceHook-3.0")
 
+local isWoWClassic, isWoWBcc, isWoWWotlkc, isWoWRetail = false, false, false, false;
+
+if (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_CLASSIC"]) then
+	isWoWClassic = true;
+elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_BURNING_CRUSADE_CLASSIC"]) then
+	isWoWBcc = true;
+elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
+	isWoWWotlkc = true;
+else
+	isWoWRetail = true;
+end
+
 function UnitFrames:OnInitialize()
 end
 
@@ -30,9 +42,11 @@ function UnitFrames:Update()
   self:PlayerFrameClassColor()
   self:TargetFrameClassColor()
   self:FocusFrameClassColor()
-  self:PlayerFrame()
-  self:TargetFrame()
-  self:FocusFrame()
+  if isWoWWotlkc then
+	self:PlayerFrame()
+	self:TargetFrame()
+	self:FocusFrame()
+  end
   self:PlayerPortrait()
   self:TargetPortrait()
   self:FocusPortrait()
@@ -40,27 +54,43 @@ function UnitFrames:Update()
 end
 
 function UnitFrames:PlayerFrameClassColor()
-  if WUI.db.profile.playerframeclasscolor then
-    self:ClassColor(PlayerFrameHealthBar)
-  else
-    PlayerFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
-  end
+	if WUI.db.profile.playerframeclasscolor then
+		self:ClassColor(PlayerFrameHealthBar)
+	else
+		PlayerFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
+	end
 end
 
 function UnitFrames:TargetFrameClassColor()
-  if WUI.db.profile.targetframeclasscolor then
-    self:ClassColor(TargetFrameHealthBar)
-  else
-    TargetFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
-  end
+	if isWoWRetail then -- Retail
+		if WUI.db.profile.targetframeclasscolor then
+			self:ClassColor(TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar)
+		else
+			TargetFrame.TargetFrameContent.TargetFrameContentMain.HealthBar:SetStatusBarColor(0, 0.99, 0)
+		end
+	else -- WotlkClassic
+		if WUI.db.profile.targetframeclasscolor then
+			self:ClassColor(TargetFrameHealthBar)
+		else
+			TargetFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
+		end
+	end
 end
 
 function UnitFrames:FocusFrameClassColor()
-  if WUI.db.profile.focusframeclasscolor then
-    self:ClassColor(FocusFrameHealthBar)
-  else
-    FocusFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
-  end
+ 	if isWoWRetail then -- Retail
+		if WUI.db.profile.focusframeclasscolor then
+			self:ClassColor(FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar)
+		else
+			FocusFrame.TargetFrameContent.TargetFrameContentMain.HealthBar:SetStatusBarColor(0, 0.99, 0)
+		end
+	else -- WotlkClassic
+		if WUI.db.profile.focusframeclasscolor then
+			self:ClassColor(FocusFrameHealthBar)
+		else
+			FocusFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
+		end
+	end
 end
 
 function UnitFrames:PlayerFrame()
@@ -105,6 +135,9 @@ function UnitFrames:ClassColor(b)
       if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
         _, class = UnitClass(unit)
         color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+		if isWoWRetail then
+			statusbar:SetStatusBarDesaturated(true)
+		end
         statusbar:SetStatusBarColor(color.r, color.g, color.b)
       end
   end
@@ -114,7 +147,15 @@ function UnitFrames:ClassColor(b)
       if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
         _, class = UnitClass(unit)
         color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+		if isWoWRetail then
+			statusbar:SetStatusBarDesaturated(true)
+		end
         statusbar:SetStatusBarColor(color.r, color.g, color.b)
+		else
+			if isWoWRetail then
+				statusbar:SetStatusBarDesaturated(true)
+			end
+			statusbar:SetStatusBarColor(0, 0.99, 0)
       end
   end
   
@@ -123,7 +164,15 @@ function UnitFrames:ClassColor(b)
       if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
         _, class = UnitClass(unit)
         color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+		if isWoWRetail then
+			statusbar:SetStatusBarDesaturated(true)
+		end
         statusbar:SetStatusBarColor(color.r, color.g, color.b)
+	else
+		if isWoWRetail then
+			statusbar:SetStatusBarDesaturated(true)
+		end
+		statusbar:SetStatusBarColor(0, 0.99, 0)
       end
   end
 end

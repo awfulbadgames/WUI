@@ -1,0 +1,8 @@
+------------------------------------------------------------------------
+r124 | nevcairiel | 2022-09-02 07:05:15 +0000 (Fri, 02 Sep 2022) | 1 line
+Changed paths:
+   M /trunk/LibKeyBound-1.0/LibKeyBound-1.0.lua
+
+LibKeyBound-1.0: Update for WoW 10.0 UI dialog changes
+------------------------------------------------------------------------
+

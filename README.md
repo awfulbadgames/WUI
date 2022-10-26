@@ -24,11 +24,11 @@ Just type in chat "/wui" to open customization options panel
 
 ##### - Retail:
 
-Changes to the Buffs Frame
+Changes to the Buffs Frame (After Dragonflight pre-patch release, this function no longer makes sense as the game's default ui takes care of it)
 Changes to the Minimap Frame
-Changes to the Chat Frame
-Changes to the Unit Frames
-Changes to the Tooltip Frame
+Changes to the Chat Frame (After Dragonflight pre-patch release, this function no longer makes sense as the game's default ui takes care of it)
+Changes to the Unit Frames (After Dragonflight pre-patch release, move unit frames is done by default game ui. Others functions still there)
+Changes to the Tooltip Frame (After Dragonflight pre-patch release, anchor point is done by default game ui. Others functions still there)
 Keybind integrated
 Some quality of life options
 

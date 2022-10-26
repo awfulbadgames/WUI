@@ -1,5 +1,17 @@
 Mini = WUI:NewModule("Mini")
 
+local isWoWClassic, isWoWBcc, isWoWWotlkc, isWoWRetail = false, false, false, false;
+
+if (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_CLASSIC"]) then
+	isWoWClassic = true;
+elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_BURNING_CRUSADE_CLASSIC"]) then
+	isWoWBcc = true;
+elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
+	isWoWWotlkc = true;
+else
+	isWoWRetail = true;
+end
+
 function Mini:OnInitialize()
 end
 
@@ -11,10 +23,13 @@ function Mini:OnDisable()
 end
 
 function Mini:Update()
-  self:HideMapIcon()
-  self:HideNorth()
+if isWoWWotlkc then
+	self:HideMapIcon()
+	self:HideNorth()
+	  self:HideZoomIcons()
+  end
   self:ScrollZoom()
-  self:HideZoomIcons()
+
   self:MinimapScale()
 end
 

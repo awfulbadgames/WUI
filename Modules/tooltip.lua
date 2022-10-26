@@ -371,9 +371,10 @@ function onValueChanged(self)
 end
 
 function setDefaultAnchor(self, parent)
-    self:SetOwner(parent, 'ANCHOR_NONE')
-    self:ClearAllPoints()
+    --self:SetOwner(parent, 'ANCHOR_NONE')
+    --self:ClearAllPoints()
 
+	--[[
     -- Set a custom position
     if WUI.db.profile.useCustomPosition then
         --self:SetPoint(WUI.db.profile.point, WUI.db.profile.relativeFrame, WUI.db.profile.relativePoint, WUI.db.profile.offsetX, WUI.db.profile.offsetY)
@@ -381,8 +382,11 @@ function setDefaultAnchor(self, parent)
         self:ClearAllPoints(true)
         self:SetPoint("BOTTOMLEFT", DragFrame2)
     else
-        self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -CONTAINER_OFFSET_X - 13, CONTAINER_OFFSET_Y)
+        self:SetPoint('BOTTOMLEFT', GameTooltipDefaultContainer, 'BOTTOMLEFT') --, -CONTAINER_OFFSET_X - 13, CONTAINER_OFFSET_Y)
     end
+	]]--
+	--self:SetPoint('BOTTOMLEFT', GameTooltipDefaultContainer, 'BOTTOMLEFT') --, -CONTAINER_OFFSET_X - 13, CONTAINER_OFFSET_Y)
+	
     -- Anchor to the mouse cursor
     if WUI.db.profile.anchorToCursor and not InCombatLockdown() and
         ( (WUI.db.profile.anchorToCursorAlt and GetMouseFocus() == WorldFrame) or not WUI.db.profile.anchorToCursorAlt ) then

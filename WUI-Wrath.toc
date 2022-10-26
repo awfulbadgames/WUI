@@ -2,7 +2,7 @@
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
-## Version: 1.20
+## Version: 1.21
 ## SavedVariables: WUIDB
 
 ## X-Category: Unit Frames, Miscellaneous

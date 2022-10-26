@@ -62,13 +62,13 @@ end
 function Chat:OnEnable()
     if WUI.db.profile.chat then
         --temporary chat windows
-        self:SecureHook("FCF_OpenTemporaryWindow", "OpenTemporaryWindow")
+        --self:SecureHook("FCF_OpenTemporaryWindow", "OpenTemporaryWindow")
         --background thingy
-        self:SecureHook("FloatingChatFrame_UpdateBackgroundAnchors", "UpdateBackgroundAnchors")
+        --self:SecureHook("FloatingChatFrame_UpdateBackgroundAnchors", "UpdateBackgroundAnchors")
         
         --don't cut the toastframe
-        BNToastFrame:SetClampedToScreen(true)
-        BNToastFrame:SetClampRectInsets(-15,15,15,-15)
+        --BNToastFrame:SetClampedToScreen(true)
+        --BNToastFrame:SetClampRectInsets(-15,15,15,-15)
         --ChatFrameMenuButton
         ChatFrameMenuButton:HookScript("OnShow", ChatFrameMenuButton.Hide)
         ChatFrameMenuButton:Hide()
@@ -86,12 +86,12 @@ function Chat:OnEnable()
         button:HookScript("OnShow", button.Hide)
         button:Hide()
         --scroll
-        FloatingChatFrame_OnMouseScroll = OnMOuseScroll
+        --FloatingChatFrame_OnMouseScroll = OnMOuseScroll
 
         --skin chat
         for i = 1, NUM_CHAT_WINDOWS do
             local chatframe = _G["ChatFrame"..i]
-            chatframe:SetClampRectInsets(0, 0, 0, 0)
+            --chatframe:SetClampRectInsets(0, 0, 0, 0)
             self:SkinChat(chatframe)
             --adjust channel display
             if (i ~= 2) then
@@ -112,17 +112,17 @@ function Chat:SkinChat(self)
     if not self then return end
     local name = self:GetName()
     --chat frame resizing
-    self:SetClampRectInsets(0, 0, 0, 0)
+	--self:SetClampRectInsets(0, 0, 0, 0)
     --self:SetMaxResize(UIParent:GetWidth()/2, UIParent:GetHeight()/2)  --original
-    self:SetMaxResize(floor(tonumber(GetScreenWidth()))/2, floor(tonumber(GetScreenHeight()))/2)
-    self:SetMinResize(100, 50)
+    --self:SetMaxResize(floor(tonumber(GetScreenWidth()))/2, floor(tonumber(GetScreenHeight()))/2)
+    --self:SetMinResize(100, 50)
 
-    if name ~= "ChatFrame2" then
-        self:ClearAllPoints()
-        self:SetPoint("BOTTOMLEFT", UIParent, 5, 9)
-        self:SetWidth(440)
-        self:SetHeight(190)
-    end
+    --if name ~= "ChatFrame2" then
+    --   self:ClearAllPoints()
+    --    self:SetPoint("BOTTOMLEFT", UIParent, 5, 9)
+    --    self:SetWidth(440)
+    --    self:SetHeight(190)
+    --end
 
     --chat fading
     self:SetFading(true)
@@ -136,14 +136,14 @@ function Chat:SkinChat(self)
     local eb = _G[name.."EditBox"]
     eb:SetAltArrowKeyMode(false)
     --reposition
-    eb:ClearAllPoints()
-    if name == "ChatFrame2" then
-        eb:SetPoint("BOTTOM", self, "TOP", 0, 22+24) --CombatLogQuickButtonFrame_Custom:GetHeight()
-    else
-        eb:SetPoint("BOTTOM", self, "TOP", 0, 22)
-    end
-    eb:SetPoint("LEFT",self,-5,0)
-    eb:SetPoint("RIGHT",self,10,0)
+    --eb:ClearAllPoints()
+    --if name == "ChatFrame2" then
+    --    eb:SetPoint("BOTTOM", self, "TOP", 0, 22+24) --CombatLogQuickButtonFrame_Custom:GetHeight()
+    --else
+    --    eb:SetPoint("BOTTOM", self, "TOP", 0, 22)
+    --end
+    --eb:SetPoint("LEFT",self,-5,0)
+    --eb:SetPoint("RIGHT",self,10,0)
 end
 
 --OpenTemporaryWindow

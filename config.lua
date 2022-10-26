@@ -624,6 +624,7 @@ else
 	config = {}
 	config.defaults = {
 		profile = {
+			--[[
 			--Buffs
 			--buffsLocation	= { "TOPRIGHT", Minimap, "TOPLEFT", -40, 10 },
 			buffsL1			= "TOPRIGHT",
@@ -649,13 +650,14 @@ else
 			deBuffsNumCols	    = 8,
 			deBuffsStartPoint   = "TOPRIGHT",
 			deBuffsRowMargin    = 20,
-
+			]]--
+			
 			--Casting Bar
 			castingbaricon          = true,
 			castingbariconposition  = 1,
-			castingbarpoint         = select(1,CastingBarFrame:GetPoint()),
-			castingbarrelativeTo    = select(2,CastingBarFrame:GetPoint()),
-			castingbarrelativePoint = select(3,CastingBarFrame:GetPoint()),
+			castingbarpoint         = select(1,PlayerCastingBarFrame:GetPoint()),
+			castingbarrelativeTo    = select(2,PlayerCastingBarFrame:GetPoint()),
+			castingbarrelativePoint = select(3,PlayerCastingBarFrame:GetPoint()),
 			castingbarx             = 0,
 			castingbary             = 210,
 			castingbarscale         = 1.3,
@@ -681,7 +683,8 @@ else
 			playerportrait          = true,
 			targetportrait          = true,
 			focusportrait          	= true,
-		
+
+			--[[
 			playerframepoint            = select(1,PlayerFrame:GetPoint()),
 			playerframerelativeTo       = select(2,PlayerFrame:GetPoint()),
 			playerframerelativePoint    = select(3,PlayerFrame:GetPoint()),
@@ -700,6 +703,7 @@ else
 			focusframex                = 260, --select(4,TargetFrame:GetPoint()),
 			focusframey                = -340, --select(5,TargetFrame:GetPoint()),
 			focusframescale            = 1, --TargetFrame:GetScale(),
+			]]--
 			
 			raidframescale = 1,
 
@@ -732,12 +736,12 @@ else
 			cursorAnchorPoint   = 'ANCHOR_CURSOR_LEFT', -- '_CURSOR_LEFT', '_CURSOR', '_CURSOR_RIGHT'
 			cursorOffsetX       = 0,
 			cursorOffsetY       = 0,
-			useCustomPosition   = false,
-			point               = 'CENTER',
-			relativeFrame       = UIParent,
-			relativePoint       = 'CENTER',
-			offsetX             = 0,
-			offsetY             = 0,
+			--useCustomPosition   = false,
+			--point               = 'CENTER',
+			--relativeFrame       = UIParent,
+			--relativePoint       = 'CENTER',
+			--offsetX             = 0,
+			--offsetY             = 0,
 		
 			hideInCombat        = false, -- for buffs, spells, items, etc. the tooltip remains visible
 			showSpellID         = false,
@@ -788,7 +792,7 @@ else
 					},
 				},
 			},
-
+			--[[
 			buffsframe = {
 				name = "Buffs",
 				desc = "Some changes to the BuffFrame",
@@ -855,7 +859,7 @@ else
 					},
 				},
 			},
-			
+			]]--
 			castingbar = {
 				name = "Casting Bar",
 				desc = "Changes to the casting bar",
@@ -884,6 +888,7 @@ else
 							return WUI.db.profile.castingbaricon == false;
 						end,
 					},
+					--[[
 					castingbartweaks = {
 						order = 3, type = "group", inline = true,
 						name = "Casting Bar Tweaks",
@@ -927,6 +932,7 @@ else
 							},
 						},
 					},
+					]]--
 				},
 			},
 
@@ -961,6 +967,7 @@ else
 				type = 'group',
 				order = 4,
 				args = {
+					--[[
 					hidemapicon = {
 						order = 1, type = "toggle",
 						name = "Hide Map Icon", desc = "Hides the map icon",
@@ -988,6 +995,7 @@ else
 							Mini:HideZoomIcons()
 						end,
 					},
+					]]--
 					scrollzoom = {
 						order = 4, type = "toggle",
 						name = "Enable Scrool Zoom", desc = "Enables scroll zoom in minimap",
@@ -1025,12 +1033,14 @@ else
 						get = function(info) return WUI.db.profile.autoscreenshot end,
 						set = function(info,val) WUI.db.profile.autoscreenshot = val end,
 					},
+					--[[
 					chat = {
 						order = 2, type = "toggle",
 						name = "Chat", desc = "Some modifications to the chat",
 						get = function(info) return WUI.db.profile.chat end,
 						set = function(info,val) WUI.db.profile.chat = val end,
 					},
+					]]--
 					easydelete = {
 						order = 3, type = "toggle",
 						name = "Easy Delete", desc = "Supress [Type DELETE into the field to confirm] on deleting itens (disable will reload ui)",
@@ -1173,18 +1183,21 @@ else
 						get = function(info) return WUI.db.profile.HideCombat end,
 						set = function(info,val) WUI.db.profile.HideCombat = val end,
 					},
+					--[[
 					useCustomPosition = {
 						order = 17, type = "toggle",
 						name = "Anchor to Custom Position", desc = "Anchor tooltip to a custom position",
 						get = function(info) return WUI.db.profile.useCustomPosition end,
 						set = function(info,val) WUI.db.profile.useCustomPosition = val end,
 					},
+					]]--
 					anchorToCursor = {
 						order = 18, type = "toggle",
 						name = "Anchor to Cursor", desc = "Anchor tooltip to cursor",
 						get = function(info) return WUI.db.profile.anchorToCursor end,
 						set = function(info,val) WUI.db.profile.anchorToCursor = val end,
 					},
+					--[[
 					tooltipanchor = {
 						order = 19, type = "group", inline = true,
 						name = "",
@@ -1195,6 +1208,7 @@ else
 							},
 						},
 					},
+					]]--
 				},
 			},
 
@@ -1266,6 +1280,7 @@ else
 							UnitFrames:FocusPortrait()
 						end,
 					},
+					--[[
 					playerframestweaks = {
 						order = 9, type = "group", inline = true,
 						name = "Player Frames Tweaks",
@@ -1365,6 +1380,7 @@ else
 							},
 						},
 					},
+					]]--
 					raidframescale = {
 						order = 12, type = "range", min = 0.1, max = 2,
 						name = "Raid Frame Scale", desc = "Change raid frame scale",
