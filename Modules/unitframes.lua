@@ -55,9 +55,9 @@ end
 
 function UnitFrames:PlayerFrameClassColor()
 	if WUI.db.profile.playerframeclasscolor then
-		self:ClassColor(PlayerFrameHealthBar)
+		self:ClassColor(PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar) --PlayerFrameHealthBar)
 	else
-		PlayerFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
+		PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar:SetStatusBarColor(0, 0.99, 0)
 	end
 end
 

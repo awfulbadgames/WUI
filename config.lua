@@ -90,7 +90,7 @@ elseif (_G["WOW_PROJECT_ID"] == _G["WOW_PROJECT_WRATH_CLASSIC"]) then
 			raidframescale = 1,
 
 			--Tooltip
-			enableTooltipChanges= true,
+			enableTooltipChanges= false,
 
 			UnitTitle           = true,
 			UnitGender          = false,
