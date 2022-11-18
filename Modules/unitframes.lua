@@ -54,10 +54,18 @@ function UnitFrames:Update()
 end
 
 function UnitFrames:PlayerFrameClassColor()
-	if WUI.db.profile.playerframeclasscolor then
-		self:ClassColor(PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar) --PlayerFrameHealthBar)
+	if isWoWRetail then -- Retail
+		if WUI.db.profile.playerframeclasscolor then
+			self:ClassColor(PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar) --PlayerFrameHealthBar)
+		else
+			PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar:SetStatusBarColor(0, 0.99, 0)
+		end
 	else
-		PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarArea.HealthBar:SetStatusBarColor(0, 0.99, 0)
+		if WUI.db.profile.playerframeclasscolor then
+			self:ClassColor(PlayerFrameHealthBar)
+		else
+			PlayerFrameHealthBar:SetStatusBarColor(0, 0.99, 0)
+		end
 	end
 end
 
