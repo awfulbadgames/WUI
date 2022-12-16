@@ -12,6 +12,6 @@ end
   
 function AutoScreeshot:ACHIEVEMENT_EARNED()
     if WUI.db.profile.autoscreenshot then
-        C_Timer.After(1, Screenshot)
+        C_Timer.After(1, function() Screenshot() end)
     end
 end
