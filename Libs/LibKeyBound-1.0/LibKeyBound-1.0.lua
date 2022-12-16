@@ -1,6 +1,6 @@
 --[[
 Name: LibKeyBound-1.0
-Revision: $Rev: 115 $
+Revision: $Rev: 124 $
 Author(s): Gello, Maul, Toadkiller, Tuller
 Website: http://www.wowace.com/wiki/LibKeyBound-1.0
 Documentation: http://www.wowace.com/wiki/LibKeyBound-1.0
@@ -10,7 +10,7 @@ Dependencies: CallbackHandler-1.0
 --]]
 
 local MAJOR = 'LibKeyBound-1.0'
-local MINOR = 100000 + 1
+local MINOR = 100000 + 3
 
 --[[
 	LibKeyBound-1.0
@@ -43,11 +43,12 @@ LibKeyBound.L = L
 LibKeyBound.Binder = LibKeyBound.Binder or {}
 
 local SaveBindings = SaveBindings or AttemptToSaveBindings
+local WoW10 = select(4, GetBuildInfo()) >= 100000
 
 -- #NODOC
 function LibKeyBound:Initialize()
 	do
-		local f = CreateFrame('Frame', 'KeyboundDialog', UIParent)
+		local f = CreateFrame('Frame', 'KeyboundDialog', UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		f:SetFrameStrata('DIALOG')
 		f:SetToplevel(true)
 		f:EnableMouse(true)
@@ -55,28 +56,21 @@ function LibKeyBound:Initialize()
 		f:SetClampedToScreen(true)
 		f:SetWidth(360)
 		f:SetHeight(140)
-		
-		Mixin(f, BackdropTemplateMixin)
-		
-		local wowversion, wowbuild, wowdate, wowtocversion = GetBuildInfo()
-		if (wowtocversion > 90000) then Mixin(self, BackdropTemplateMixin) end
-
-		f:SetBackdrop({
+		f:SetBackdrop{
 			bgFile='Interface\\DialogFrame\\UI-DialogBox-Background' ,
 			edgeFile='Interface\\DialogFrame\\UI-DialogBox-Border',
 			tile = true,
 			insets = {left = 11, right = 12, top = 12, bottom = 11},
 			tileSize = 32,
 			edgeSize = 32,
-		})
-				
+		}
 		f:SetPoint('TOP', 0, -24)
 		f:Hide()
 		f:SetScript('OnShow', function() PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION or 'igMainMenuOption') end)
 		f:SetScript('OnHide', function() PlaySound(SOUNDKIT and SOUNDKIT.GS_TITLE_OPTION_EXIT or 'gsTitleOptionExit') end)
 
 		f:RegisterForDrag('LeftButton')
-		f:SetScript('OnDragStart', function(f) f:StartMoving() end) 
+		f:SetScript('OnDragStart', function(f) f:StartMoving() end)
 		f:SetScript('OnDragStop', function(f) f:StopMovingOrSizing() end)
 
 		local header = f:CreateTexture(nil, 'ARTWORK')
@@ -98,7 +92,7 @@ function LibKeyBound:Initialize()
 		desc:SetText(format(L.BindingsHelp, GetBindingText('ESCAPE')))
 
 		-- Per character bindings checkbox
-		local perChar = CreateFrame('CheckButton', 'KeyboundDialogCheck', f, 'OptionsCheckButtonTemplate')
+		local perChar = CreateFrame('CheckButton', 'KeyboundDialogCheck', f, WoW10 and 'UICheckButtonTemplate' or 'OptionsCheckButtonTemplate')
 		_G[perChar:GetName() .. 'Text']:SetText(CHARACTER_SPECIFIC_KEYBINDINGS)
 
 		perChar:SetScript('OnShow', function(self)
@@ -112,7 +106,8 @@ function LibKeyBound:Initialize()
 		end)
 
 		-- Okay bindings checkbox
-		local okayBindings = CreateFrame('CheckButton', 'KeyboundDialogOkay', f, 'OptionsButtonTemplate')
+		local okayBindings = CreateFrame('CheckButton', 'KeyboundDialogOkay', f, WoW10 and 'UIPanelButtonTemplate' or 'OptionsButtonTemplate')
+		okayBindings:SetSize(100, 20)
 		getglobal(okayBindings:GetName() .. 'Text'):SetText(OKAY)
 
 		okayBindings:SetScript('OnClick', function(self)
@@ -141,7 +136,8 @@ function LibKeyBound:Initialize()
 		end)
 
 		-- Cancel bindings checkbox
-		local cancelBindings = CreateFrame('CheckButton', 'KeyboundDialogCancel', f, 'OptionsButtonTemplate')
+		local cancelBindings = CreateFrame('CheckButton', 'KeyboundDialogCancel', f, WoW10 and 'UIPanelButtonTemplate' or 'OptionsButtonTemplate')
+		cancelBindings:SetSize(100, 20)
 		getglobal(cancelBindings:GetName() .. 'Text'):SetText(CANCEL)
 
 		cancelBindings:SetScript('OnClick', function(self)
@@ -390,6 +386,7 @@ function LibKeyBound:ToShortKey(key)
 		key = key:gsub('ALT%-', L['Alt'])
 		key = key:gsub('CTRL%-', L['Ctrl'])
 		key = key:gsub('SHIFT%-', L['Shift'])
+		key = key:gsub('META%-', L['Command'])
 		key = key:gsub('NUMPAD', L['NumPad'])
 
 		key = key:gsub('PLUS', '%+')
@@ -472,7 +469,7 @@ function LibKeyBound.Binder:OnKeyDown(key)
 	if not button or not button:IsMouseOver()then return end
 
 	if (key == 'UNKNOWN' or key == 'LSHIFT' or key == 'RSHIFT' or
-		key == 'LCTRL' or key == 'RCTRL' or key == 'LALT' or key == 'RALT') then
+		key == 'LCTRL' or key == 'RCTRL' or key == 'LALT' or key == 'RALT' or key == 'LMETA' or key == 'RMETA') then
 		return
 	end
 
@@ -520,6 +517,9 @@ function LibKeyBound.Binder:OnKeyDown(key)
 		end
 		if IsAltKeyDown() then
 			key = 'ALT-' .. key
+		end
+		if IsMetaKeyDown and IsMetaKeyDown() then
+			key = 'META-' .. key
 		end
 	end
 
