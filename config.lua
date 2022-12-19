@@ -785,7 +785,7 @@ else
 						name = "",
 						args = {
 							bind = {
-								order = 1, type = "execute", func = function() SlashCmdList["EA"]("align"); InterfaceOptionsFrame_Show(false) end,
+								order = 1, type = "execute", func = function() SlashCmdList["EA"]("align"); CloseWindows() end,
 								name = "Align...", desc = format("%s", "\nTurn on/off the grid"),
 							},
 						},
@@ -953,7 +953,7 @@ else
 						name = "",
 						args = {
 							bind = {
-								order = 1, type = "execute", func = function() local LibKeyBound = LibStub('LibKeyBound-1.0'); LibKeyBound:Toggle(); InterfaceOptionsFrame_Show(false) end,
+								order = 1, type = "execute", func = function() local LibKeyBound = LibStub('LibKeyBound-1.0'); LibKeyBound:Toggle(); CloseWindows() end,
 								name = "Bind keys...", desc = format("%s", "\nEnter binding key mode"),
 							},
 						},
@@ -1074,7 +1074,7 @@ else
 					},
 				},
 			},
-
+			--[[
 			tooltip = {
 				name = "ToolTip",
 				desc = "Change the anchor of the tooltip",
@@ -1182,22 +1182,19 @@ else
 						name = "Tooltip Anchor", desc = "",
 						get = function(info) return WUI.db.profile.HideCombat end,
 						set = function(info,val) WUI.db.profile.HideCombat = val end,
-					},
-					--[[
+					},					
 					useCustomPosition = {
 						order = 17, type = "toggle",
 						name = "Anchor to Custom Position", desc = "Anchor tooltip to a custom position",
 						get = function(info) return WUI.db.profile.useCustomPosition end,
 						set = function(info,val) WUI.db.profile.useCustomPosition = val end,
 					},
-					]]--
 					anchorToCursor = {
 						order = 18, type = "toggle",
 						name = "Anchor to Cursor", desc = "Anchor tooltip to cursor",
 						get = function(info) return WUI.db.profile.anchorToCursor end,
 						set = function(info,val) WUI.db.profile.anchorToCursor = val end,
 					},
-					--[[
 					tooltipanchor = {
 						order = 19, type = "group", inline = true,
 						name = "",
@@ -1208,10 +1205,10 @@ else
 							},
 						},
 					},
-					]]--
 				},
 			},
-
+			]]-- 
+			
 			unitframes = {
 				name = "UnitFrames",
 				desc = "Some changes to the UnitFrames",

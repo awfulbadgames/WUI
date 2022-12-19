@@ -19,26 +19,30 @@ To install just place the unzipped folder into <World of Warcraft \ _classic_ \ 
 ### - Customizable
 
 Just type in chat "/wui" to open customization options panel
+Type /align to draw a grid in screen
+Type /kb to set your keybinds
 
 ### - Features
 
 ##### - Retail:
 
-Changes to the Buffs Frame (After Dragonflight pre-patch release, this function no longer makes sense as the game's default ui takes care of it)
-Changes to the Minimap Frame
-Changes to the Chat Frame (After Dragonflight pre-patch release, this function no longer makes sense as the game's default ui takes care of it)
-Changes to the Unit Frames (After Dragonflight pre-patch release, move unit frames is done by default game ui. Others functions still there)
-Changes to the Tooltip Frame (After Dragonflight pre-patch release, anchor point is done by default game ui. Others functions still there)
-Keybind integrated
-Some quality of life options
-
-##### - Wrath Classic:
-
-Changes to the Buffs Frame
+Type /wui to see the options
+Changes to the Casting Bar
 Changes to the Minimap Frame
 Changes to the Unit Frames
 Keybind integrated
-Some quality of life options
+Some quality of life options (Hide Talking Heads, Auto Screenshot, Easy Delete, Stats on Screen)
+REMOVED Tooltips is a bit too much for me right now so i recommend an option bellow
+
+##### - Wrath Classic:
+
+Type /wui to see the options
+Changes to the Buffs Frame
+Changes to the Casting Bar
+Changes to the Minimap Frame
+Changes to the Unit Frames
+Keybind integrated
+Some quality of life options (Auto Screenshot, Easy Delete, Stats on Screen)
 
 ### - ToDo
 
@@ -52,7 +56,7 @@ List of some addons that works great with WUI
 
 BlizzMove - https://www.curseforge.com/wow/addons/blizzmove
 Dominos - https://www.curseforge.com/wow/addons/dominos
-TipTac - https://github.com/frozn/TipTac
+TipTac Reborn - https://www.curseforge.com/wow/addons/tiptac-reborn
 
 ### Based on and used code in parts or totally from some addons ###
 
