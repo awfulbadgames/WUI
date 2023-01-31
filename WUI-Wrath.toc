@@ -1,8 +1,8 @@
-## Interface: 30400
+## Interface: 30401
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
-## Version: 1.25
+## Version: 1.26
 ## SavedVariables: WUIDB
 
 ## X-Category: Unit Frames, Miscellaneous
