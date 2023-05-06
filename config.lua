@@ -672,6 +672,7 @@ else
 			--Misc
 			autoscreenshot  = true,
 			chat            = true,
+			cinematic		= false,
 			easydelete      = true,
 			stats           = true,
 			talkinghead     = true,
@@ -1041,6 +1042,12 @@ else
 						set = function(info,val) WUI.db.profile.chat = val end,
 					},
 					]]--
+					cinematic = {
+						order = 2, type = "toggle",
+						name = "Cinematic Skip", desc = "Auto skip Cinematics and Movie Trailers (Hold any of the modifier keys <alt> <ctrl> <shift> to watch the cinematics)",
+						get = function(info) return WUI.db.profile.cinematic end,
+						set = function(info,val) WUI.db.profile.cinematic = val end,
+					},
 					easydelete = {
 						order = 3, type = "toggle",
 						name = "Easy Delete", desc = "Supress [Type DELETE into the field to confirm] on deleting itens (disable will reload ui)",
