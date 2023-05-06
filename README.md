@@ -107,6 +107,12 @@ https://www.curseforge.com/wow/addons/tooltip-enhanced
 
 MIT license
 
+- Code from CinematicCanceler
+
+https://www.curseforge.com/wow/addons/cinematiccanceler
+
+BSD License
+
 - Libraries from Ace3:
 
 https://www.curseforge.com/wow/addons/ace3
