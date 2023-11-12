@@ -1,4 +1,4 @@
-## Interface: 100107
+## Interface: 100200
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
