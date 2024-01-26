@@ -1,8 +1,8 @@
-## Interface: 100200
+## Interface: 100205
 ## Title: WUI
 ## Notes: Some changes to the default Blizzard UI
 ## Author: Wira
-## Version: 1.31
+## Version: 1.32
 ## SavedVariables: WUIDB
 
 ## X-Category: Unit Frames, Miscellaneous
@@ -29,13 +29,10 @@ Modules\align.lua
 Modules\autoscreenshot.lua
 ##Modules\buffs.lua -- deprecated
 Modules\castingbar.lua
-##Modules\chat.lua
 Modules\cinematic.lua
 Modules\easydelete.lua
 Modules\keybind.lua
-##Modules\movetooltip.lua -- deprecated
 Modules\minimap.lua
 Modules\stats.lua
 Modules\talkinghead.lua
-##Modules\tooltip.lua
 Modules\unitframes.lua
